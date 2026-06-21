@@ -194,15 +194,48 @@
       text-decoration: underline;
     }
 
+    .glow-bg {
+      position: fixed;
+      top: 50%;
+      right: -10%;
+      transform: translateY(-50%);
+      width: 70vmin;
+      height: 70vmin;
+      opacity: 0.06;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    header, main, footer { position: relative; z-index: 1; }
+
     @media (max-width: 560px) {
       header { padding: 4rem 0 3rem; }
       .work-areas { grid-template-columns: 1fr; }
       .mark h1 { font-size: 1.4rem; }
       .intro { font-size: 1.1rem; }
+      .glow-bg { width: 90vmin; height: 90vmin; right: -30%; }
     }
   </style>
 </head>
 <body>
+  <svg class="glow-bg" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <defs>
+      <filter id="phosphor">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="14" result="blur"/>
+        <feMerge>
+          <feMergeNode in="blur"/>
+          <feMergeNode in="blur"/>
+          <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+      </filter>
+    </defs>
+    <g filter="url(#phosphor)">
+      <circle cx="470" cy="190" r="70" fill="none" stroke="#FFD60A" stroke-width="22"/>
+      <rect x="460" y="340" width="160" height="280" rx="6" fill="none" stroke="#FFD60A" stroke-width="22"/>
+      <path d="M 500 640 H 660 V 720 Q 660 860 520 860 H 370 Q 280 860 280 780 V 750 Q 280 710 330 710 H 410 Q 500 710 500 640 Z" fill="none" stroke="#FFD60A" stroke-width="22"/>
+    </g>
+  </svg>
+
   <header>
     <div class="container">
       <div class="mark">
