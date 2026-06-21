@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Jeff Olsen — jeffols</title>
+  <meta name="description" content="Distinguished engineer. Ontology, context engineering, simplicity.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1024 1024'%3E%3Crect width='1024' height='1024' rx='174' fill='%23111827'/%3E%3Crect x='400' y='120' width='140' height='140' rx='70' fill='%23FFD60A'/%3E%3Crect x='460' y='340' width='160' height='280' rx='6' fill='%23FFD60A'/%3E%3Cpath d='M 500 640 H 660 V 720 Q 660 860 520 860 H 370 Q 280 860 280 780 V 750 Q 280 710 330 710 H 410 Q 500 710 500 640 Z' fill='%23FFD60A'/%3E%3C/svg%3E">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #111827;
+      --surface: #1a2235;
+      --text: #F8FAFC;
+      --text-dim: #94A3B8;
+      --accent: #FFD60A;
+      --accent-dim: rgba(255, 214, 10, 0.12);
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      width: 100%;
+    }
+
+    header {
+      padding: 6rem 0 4rem;
+    }
+
+    .mark {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .mark svg {
+      width: 56px;
+      height: 56px;
+      flex-shrink: 0;
+    }
+
+    .mark h1 {
+      font-size: 1.75rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+
+    .mark h1 span {
+      color: var(--text-dim);
+      font-weight: 400;
+    }
+
+    .intro {
+      font-size: 1.25rem;
+      color: var(--text-dim);
+      max-width: 560px;
+      line-height: 1.7;
+    }
+
+    .intro strong {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    section {
+      padding: 3rem 0;
+      border-top: 1px solid rgba(148, 163, 184, 0.08);
+    }
+
+    section h2 {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+    }
+
+    .principles {
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    .principle {
+      padding: 1.25rem 1.5rem;
+      background: var(--surface);
+      border-radius: 8px;
+      border-left: 3px solid var(--accent);
+    }
+
+    .principle h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+    }
+
+    .principle p {
+      font-size: 0.9rem;
+      color: var(--text-dim);
+      line-height: 1.6;
+    }
+
+    .journey {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      position: relative;
+      padding-left: 2rem;
+    }
+
+    .journey::before {
+      content: '';
+      position: absolute;
+      left: 5px;
+      top: 8px;
+      bottom: 8px;
+      width: 1px;
+      background: linear-gradient(to bottom, var(--accent), rgba(255, 214, 10, 0.2));
+    }
+
+    .step {
+      position: relative;
+      padding: 1rem 0 1.5rem 1rem;
+    }
+
+    .step::before {
+      content: '';
+      position: absolute;
+      left: -2rem;
+      top: 1.35rem;
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: var(--bg);
+      border: 2px solid var(--accent);
+    }
+
+    .step:last-child::before {
+      background: var(--accent);
+    }
+
+    .step h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    .step p {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      line-height: 1.5;
+    }
+
+    .step:last-child h3 {
+      color: var(--accent);
+    }
+
+    footer {
+      margin-top: auto;
+      padding: 3rem 0;
+      border-top: 1px solid rgba(148, 163, 184, 0.08);
+    }
+
+    footer .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    footer p {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+    }
+
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 560px) {
+      header { padding: 4rem 0 3rem; }
+      .work-areas { grid-template-columns: 1fr; }
+      .mark h1 { font-size: 1.4rem; }
+      .intro { font-size: 1.1rem; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <div class="mark">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-label="jeffols signature icon">
+          <rect width="1024" height="1024" rx="174" fill="#111827" stroke="#FFD60A" stroke-width="2"/>
+          <rect x="400" y="120" width="140" height="140" rx="70" fill="#FFD60A"/>
+          <rect x="460" y="340" width="160" height="280" rx="6" fill="#FFD60A"/>
+          <path d="M 500 640 H 660 V 720 Q 660 860 520 860 H 370 Q 280 860 280 780 V 750 Q 280 710 330 710 H 410 Q 500 710 500 640 Z" fill="#FFD60A"/>
+        </svg>
+        <h1>Jeff Olsen <span>/ jeffols</span></h1>
+      </div>
+      <p class="intro">
+        Distinguished engineer building systems that <strong>understand before they act</strong>.
+        I work at the intersection of ontology, context engineering, and the deliberate
+        pursuit of simplicity in complex domains.
+      </p>
+    </div>
+  </header>
+
+  <main>
+    <section>
+      <div class="container">
+        <h2>Thinking</h2>
+        <div class="principles">
+          <div class="principle">
+            <h3>Ontology as architecture</h3>
+            <p>Systems inherit the shape of the concepts they model. Get the ontology right and the code writes itself. Get it wrong and no amount of engineering saves you.</p>
+          </div>
+          <div class="principle">
+            <h3>Context over instruction</h3>
+            <p>The best systems don't need more rules — they need better context. Engineer the information environment and let intelligence emerge from structure.</p>
+          </div>
+          <div class="principle">
+            <h3>Simplicity is the residue of understanding</h3>
+            <p>Complexity isn't a problem to manage — it's a symptom of incomplete comprehension. Simplify by understanding more deeply, not by hiding more aggressively.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <h2>The Arc</h2>
+        <div class="journey">
+          <div class="step">
+            <h3>Knowledge Catalog</h3>
+            <p>Started with the foundational question: how do you make what an organization knows queryable, composable, and alive?</p>
+          </div>
+          <div class="step">
+            <h3>Thinking Tool</h3>
+            <p>If knowledge is the material, thinking is the operation. Built tools for structured reasoning — making the invisible work of understanding visible.</p>
+          </div>
+          <div class="step">
+            <h3>AI Workbench</h3>
+            <p>Context-rich environments where AI and human reasoning compose. Not chat — workbench. The right information at the right time.</p>
+          </div>
+          <div class="step">
+            <h3>Working Faster</h3>
+            <p>Turned the lens on the craft itself. What does high-leverage engineering actually look like when you stop confusing motion for progress?</p>
+          </div>
+          <div class="step">
+            <h3>Structured Prompt-Driven Development</h3>
+            <p>Decomposing work into composable concept-prompts — an ETL for knowledge. Raw captures ideas as they arrive. Lenses transform them into structured artifacts. Deliverables derive from lenses on demand. Regenerate anything without losing information.</p>
+          </div>
+          <div class="step">
+            <h3>Proving Ground</h3>
+            <p>An end-to-end experiment applying the full stack: ontology, context engineering, composable prompts, and raw-lens-deliverable knowledge capture — validating that the thinking holds under real delivery pressure.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>&copy; Jeff Olsen</p>
+      <p><a href="https://www.linkedin.com/in/jeffols/">LinkedIn</a></p>
+    </div>
+  </footer>
+</body>
+</html>
