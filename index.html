@@ -4,270 +4,436 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Jeff Olsen / jeffols</title>
-  <meta name="description" content="Distinguished engineer. Ontology, context engineering, simplicity.">
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1024 1024'%3E%3Crect width='1024' height='1024' rx='174' fill='%23111827'/%3E%3Crect x='400' y='120' width='140' height='140' rx='70' fill='%23FFD60A'/%3E%3Crect x='460' y='340' width='160' height='280' rx='6' fill='%23FFD60A'/%3E%3Cpath d='M 500 640 H 660 V 720 Q 660 860 520 860 H 370 Q 280 860 280 780 V 750 Q 280 710 330 710 H 410 Q 500 710 500 640 Z' fill='%23FFD60A'/%3E%3C/svg%3E">
+  <meta name="description" content="I make hidden work and complex systems easier to see. Practical models for organizational delivery, context engineering, knowledge systems, and enterprise technology.">
+
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#111827">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Jeff Olsen">
+  <meta property="og:title" content="Jeff Olsen">
+  <meta property="og:description" content="I make hidden work and complex systems easier to see. Practical models for organizational delivery, context engineering, knowledge systems, and enterprise technology.">
+  <meta property="og:url" content="https://www.jeffols.com">
+  <meta property="og:image" content="https://www.jeffols.com/assets/social-preview.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="The jeffols mark, a deconstructed lowercase j in Signal Yellow on dark charcoal.">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Jeff Olsen">
+  <meta name="twitter:description" content="I make hidden work and complex systems easier to see.">
+  <meta name="twitter:image" content="https://www.jeffols.com/assets/social-preview.png">
+  <link rel="canonical" href="https://www.jeffols.com">
+
   <style>
+    /* Typography: decision 0007 in ../jeff-brand-logo/docs/decisions/.
+       Inter for UI, navigation and headings. iA Writer Duo S for prose.
+       Both are container conversions of the upstream TTFs, not subsets. */
+    @font-face { font-family: 'Inter'; font-weight: 100 900; font-style: normal; font-display: swap;
+                 src: url('/assets/fonts/InterVariable.woff2') format('woff2'); }
+    /* Duo Bold is deliberately not declared or shipped: nothing on this page sets
+       bold in the essay register. Add it back with the long-form content that
+       needs it. See CLAUDE.md, "Re-syncing brand assets". */
+    @font-face { font-family: 'iA Writer Duo S'; font-weight: 400; font-style: normal; font-display: swap;
+                 src: url('/assets/fonts/iAWriterDuoS-Regular.woff2') format('woff2'); }
+
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
+      /* signal_yellow dark. Glyph #FFD60A on plate #111827, 12.57:1. */
       --bg: #111827;
       --surface: #1a2235;
+      --surface-2: #202b42;
       --text: #F8FAFC;
-      --text-dim: #94A3B8;
+      --text-dim: #A9B6C9;
       --accent: #FFD60A;
-      --accent-dim: rgba(255, 214, 10, 0.12);
+      --rule: rgba(148, 163, 184, 0.16);
+      --font-ui: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --font-essay: 'iA Writer Duo S', ui-monospace, SFMono-Regular, monospace;
+      --measure: 62ch;
+    }
+
+    html { scroll-behavior: smooth; }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important;
+                               transition-duration: 0.01ms !important; }
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', system-ui, sans-serif;
+      font-family: var(--font-ui);
       background: var(--bg);
       color: var(--text);
       line-height: 1.6;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
+      -webkit-font-smoothing: antialiased;
     }
 
-    .container {
-      max-width: 720px;
-      margin: 0 auto;
-      padding: 0 2rem;
-      width: 100%;
-    }
+    .container { max-width: 860px; margin: 0 auto; padding: 0 1.5rem; width: 100%; }
 
-    header {
-      padding: 6rem 0 4rem;
-    }
+    a { color: var(--accent); }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 3px; }
 
-    .mark {
-      display: flex;
-      align-items: center;
-      gap: 1.5rem;
-      margin-bottom: 2.5rem;
+    .skip-link {
+      position: absolute; left: -9999px; top: 0; z-index: 10;
+      background: var(--accent); color: #111827; padding: 0.6rem 1rem;
+      font-size: 0.9rem; font-weight: 600; text-decoration: none;
     }
+    .skip-link:focus { left: 0; }
 
-    .mark svg {
-      width: 56px;
-      height: 56px;
-      flex-shrink: 0;
+    /* ---------- header ---------- */
+    .site-header {
+      position: relative; z-index: 2;
+      padding: 1.75rem 0;
+      border-bottom: 1px solid var(--rule);
     }
-
-    .mark h1 {
-      font-size: 1.75rem;
-      font-weight: 600;
-      letter-spacing: -0.02em;
+    .site-header .container {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 1.5rem; flex-wrap: wrap;
     }
+    /* The lockup is the generated horizontal mono lockup, inlined verbatim so
+       fill="currentColor" can inherit. Never set the mark beside lowercase
+       "jeffols": the mark is a lowercase j and the pair reads as "j jeffols". */
+    .brand { display: inline-flex; color: var(--text); text-decoration: none; }
+    .brand svg { height: 30px; width: auto; display: block; }
+    .brand:hover { color: var(--accent); }
 
-    .mark h1 span {
-      color: var(--text-dim);
-      font-weight: 400;
+    .site-nav ul { list-style: none; display: flex; gap: 1.5rem; flex-wrap: wrap; }
+    .site-nav a {
+      color: var(--text-dim); text-decoration: none;
+      font-size: 0.9rem; font-weight: 500;
     }
+    .site-nav a:hover, .site-nav a:focus-visible { color: var(--accent); }
 
-    .intro {
-      font-size: 1.25rem;
-      color: var(--text-dim);
-      max-width: 560px;
-      line-height: 1.7;
-    }
-
-    .intro strong {
-      color: var(--text);
-      font-weight: 500;
-    }
-
-    section {
-      padding: 3rem 0;
-      border-top: 1px solid rgba(148, 163, 184, 0.08);
-    }
-
-    section h2 {
-      font-size: 0.75rem;
-      font-weight: 600;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 1.5rem;
-    }
-
-    .principles {
-      display: grid;
-      gap: 1.5rem;
-    }
-
-    .principle {
-      padding: 1.25rem 1.5rem;
-      background: var(--surface);
-      border-radius: 8px;
-      border-left: 3px solid var(--accent);
-    }
-
-    .principle h3 {
-      font-size: 1rem;
-      font-weight: 600;
-      margin-bottom: 0.4rem;
-    }
-
-    .principle p {
-      font-size: 0.9rem;
-      color: var(--text-dim);
-      line-height: 1.6;
-    }
-
-    .journey {
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-      position: relative;
-      padding-left: 2rem;
-    }
-
-    .journey::before {
-      content: '';
+    /* ---------- hero ---------- */
+    .hero { position: relative; padding: 5.5rem 0 4.5rem; overflow: hidden; }
+    .hero-mark {
       position: absolute;
-      left: 5px;
-      top: 8px;
-      bottom: 8px;
-      width: 1px;
-      background: linear-gradient(to bottom, var(--accent), rgba(255, 214, 10, 0.2));
-    }
-
-    .step {
-      position: relative;
-      padding: 1rem 0 1.5rem 1rem;
-    }
-
-    .step::before {
-      content: '';
-      position: absolute;
-      left: -2rem;
-      top: 1.35rem;
-      width: 11px;
-      height: 11px;
-      border-radius: 50%;
-      background: var(--bg);
-      border: 2px solid var(--accent);
-    }
-
-    .step:last-child::before {
-      background: var(--accent);
-    }
-
-    .step h3 {
-      font-size: 0.95rem;
-      font-weight: 600;
-      margin-bottom: 0.25rem;
-    }
-
-    .step p {
-      font-size: 0.85rem;
-      color: var(--text-dim);
-      line-height: 1.5;
-    }
-
-    .step:last-child h3 {
-      color: var(--accent);
-    }
-
-    footer {
-      margin-top: auto;
-      padding: 3rem 0;
-      border-top: 1px solid rgba(148, 163, 184, 0.08);
-    }
-
-    footer .container {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    footer p {
-      font-size: 0.8rem;
-      color: var(--text-dim);
-    }
-
-    footer a {
-      color: var(--accent);
-      text-decoration: none;
-    }
-
-    footer a:hover {
-      text-decoration: underline;
-    }
-
-    .glow-bg {
-      position: fixed;
-      top: 50%;
-      right: -10%;
-      transform: translateY(-50%);
-      width: 70vmin;
-      height: 70vmin;
-      opacity: 0.06;
-      pointer-events: none;
+      right: -14%; top: 50%; transform: translateY(-50%);
+      width: 46rem; max-width: 78vw; height: auto;
+      opacity: 0.085;
+      pointer-events: none; user-select: none;
       z-index: 0;
     }
+    .hero .container { position: relative; z-index: 1; }
 
-    header, main, footer { position: relative; z-index: 1; }
+    .hero h1 {
+      font-family: var(--font-ui);
+      font-size: clamp(2rem, 6vw, 3.1rem);
+      font-weight: 600;
+      letter-spacing: -0.025em;
+      line-height: 1.12;
+      max-width: 18ch;
+      text-wrap: balance;
+    }
+    .hero .lede {
+      font-family: var(--font-essay);
+      font-size: clamp(0.98rem, 2.1vw, 1.1rem);
+      color: var(--text-dim);
+      margin-top: 1.6rem;
+      max-width: var(--measure);
+      line-height: 1.75;
+    }
 
+    .cta-row { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 2.5rem; }
+    .cta {
+      display: inline-flex; align-items: center;
+      padding: 0.7rem 1.25rem;
+      border-radius: 6px;
+      font-size: 0.94rem; font-weight: 600;
+      text-decoration: none;
+      border: 1px solid var(--rule);
+      color: var(--text);
+      background: var(--surface);
+      transition: background-color 120ms ease, border-color 120ms ease;
+    }
+    .cta:hover { background: var(--surface-2); border-color: rgba(148, 163, 184, 0.34); }
+    .cta-primary {
+      background: var(--accent); color: #111827; border-color: var(--accent);
+    }
+    .cta-primary:hover { background: #ffe04d; border-color: #ffe04d; }
+
+    /* ---------- sections ---------- */
+    section { padding: 3.5rem 0; border-top: 1px solid var(--rule); }
+    .hero { border-top: 0; }
+
+    .eyebrow {
+      font-size: 0.72rem; font-weight: 700;
+      letter-spacing: 0.11em; text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.6rem;
+    }
+    .section-intro {
+      font-family: var(--font-essay);
+      color: var(--text-dim);
+      font-size: 0.95rem;
+      max-width: var(--measure);
+      margin-bottom: 2rem;
+      line-height: 1.7;
+    }
+    h2.section-title {
+      font-size: 1.6rem; font-weight: 600; letter-spacing: -0.02em;
+      margin-bottom: 0.75rem;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--rule);
+      border-radius: 10px;
+      padding: 1.5rem;
+    }
+    .card h3 { font-size: 1.15rem; font-weight: 600; letter-spacing: -0.01em; }
+
+    /* ---------- two paths ---------- */
+    .paths { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+    .path { display: flex; flex-direction: column; }
+    .path .path-desc {
+      font-family: var(--font-essay);
+      font-size: 0.92rem; color: var(--text-dim);
+      margin-top: 0.7rem; line-height: 1.7;
+    }
+    .path dl { margin-top: 1.4rem; }
+    .path dt {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.09em;
+      text-transform: uppercase; color: var(--text-dim);
+      margin-bottom: 0.3rem;
+    }
+    .path dd { font-size: 0.92rem; margin-bottom: 1.1rem; line-height: 1.6; }
+    .path dd a { text-decoration: none; font-weight: 600; }
+    .path dd a:hover { text-decoration: underline; }
+    .path .path-out { margin-top: auto; padding-top: 0.5rem; }
+    .path .path-out a {
+      font-size: 0.9rem; font-weight: 600; text-decoration: none;
+      display: inline-flex; align-items: center; gap: 0.4rem;
+    }
+    .path .path-out a:hover { text-decoration: underline; }
+
+    /* ---------- principles ---------- */
+    .principles { display: grid; gap: 1rem; }
+    .principle { border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; }
+    .principle p {
+      font-family: var(--font-essay);
+      font-size: 0.92rem; color: var(--text-dim);
+      line-height: 1.7; margin-top: 0.5rem;
+    }
+
+    /* ---------- writing ---------- */
+    .essays { display: grid; gap: 1rem; }
+    .essay { display: block; text-decoration: none; color: inherit; }
+    .essay:hover { border-color: rgba(255, 214, 10, 0.45); }
+    .essay h3 { color: var(--accent); }
+    .essay .essay-what {
+      font-family: var(--font-essay);
+      font-size: 0.92rem; color: var(--text-dim);
+      line-height: 1.7; margin-top: 0.6rem; max-width: var(--measure);
+    }
+    .essay .essay-take {
+      font-size: 0.88rem; margin-top: 0.9rem; color: var(--text);
+    }
+    .essay .essay-take strong { color: var(--accent); font-weight: 600; }
+    .more-link { margin-top: 1.5rem; font-size: 0.92rem; }
+    .more-link a { font-weight: 600; text-decoration: none; }
+    .more-link a:hover { text-decoration: underline; }
+
+    /* ---------- proof of work ---------- */
+    .journey { position: relative; padding-left: 2rem; }
+    .journey::before {
+      content: ''; position: absolute; left: 5px; top: 8px; bottom: 8px;
+      width: 1px; background: linear-gradient(to bottom, var(--accent), rgba(255, 214, 10, 0.18));
+    }
+    .step { position: relative; padding: 0.9rem 0 1.4rem 1rem; }
+    .step::before {
+      content: ''; position: absolute; left: -2rem; top: 1.3rem;
+      width: 11px; height: 11px; border-radius: 50%;
+      background: var(--bg); border: 2px solid var(--accent);
+    }
+    .step:last-child::before { background: var(--accent); }
+    .step h3 { font-size: 0.98rem; font-weight: 600; margin-bottom: 0.3rem; }
+    .step:last-child h3 { color: var(--accent); }
+    .step p {
+      font-family: var(--font-essay);
+      font-size: 0.87rem; color: var(--text-dim); line-height: 1.65;
+      max-width: var(--measure);
+    }
+    .step .step-link { font-family: var(--font-ui); font-size: 0.85rem; font-weight: 600;
+                       text-decoration: none; display: inline-block; margin-top: 0.5rem; }
+    .step .step-link:hover { text-decoration: underline; }
+
+    /* ---------- about ---------- */
+    /* :not(.eyebrow) matters: the eyebrow is a <p> in this section too, and a
+       bare ".about p" outranks ".eyebrow" on font-size and colour. */
+    .about p:not(.eyebrow) {
+      font-family: var(--font-essay);
+      font-size: 0.97rem; color: var(--text-dim);
+      line-height: 1.75; max-width: var(--measure);
+    }
+    .about p:not(.eyebrow) + p { margin-top: 1rem; }
+    .about a { text-decoration: none; font-weight: 600; }
+    .about a:hover { text-decoration: underline; }
+
+    /* ---------- connect ---------- */
+    .connect { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+    .connect a { text-decoration: none; color: inherit; display: block; }
+    .connect a:hover { border-color: rgba(255, 214, 10, 0.45); }
+    .connect h3 { color: var(--accent); font-size: 1.02rem; }
+    .connect p {
+      font-size: 0.87rem; color: var(--text-dim); margin-top: 0.4rem; line-height: 1.6;
+    }
+
+    /* ---------- footer ---------- */
+    footer {
+      margin-top: auto;
+      padding: 2.75rem 0;
+      border-top: 1px solid var(--rule);
+    }
+    footer .container {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 1.5rem; flex-wrap: wrap;
+    }
+    .footer-brand { display: flex; align-items: center; gap: 0.9rem; }
+    /* Generated primary mark, inlined verbatim so currentColor inherits. */
+    .footer-brand svg { width: 30px; height: 30px; color: var(--accent); flex-shrink: 0; }
+    .footer-brand p { font-size: 0.88rem; font-weight: 600; }
+    .footer-brand span { color: var(--text-dim); font-weight: 400; }
+    .footer-links { display: flex; gap: 1.25rem; flex-wrap: wrap; }
+    .footer-links a { font-size: 0.85rem; text-decoration: none; color: var(--text-dim); }
+    .footer-links a:hover { color: var(--accent); }
+    .footer-legal { font-size: 0.8rem; color: var(--text-dim); width: 100%; }
+
+    /* ---------- responsive ---------- */
+    @media (max-width: 720px) {
+      .paths, .connect { grid-template-columns: 1fr; }
+    }
     @media (max-width: 560px) {
-      header { padding: 4rem 0 3rem; }
-      .work-areas { grid-template-columns: 1fr; }
-      .mark h1 { font-size: 1.4rem; }
-      .intro { font-size: 1.1rem; }
-      .glow-bg { width: 90vmin; height: 90vmin; right: -30%; }
+      .container { padding: 0 1.15rem; }
+      .site-header { padding: 1.25rem 0; }
+      .site-header .container { gap: 0.9rem; }
+      .brand svg { height: 26px; }
+      .site-nav ul { gap: 1.1rem; }
+      .site-nav a { font-size: 0.85rem; }
+      .hero { padding: 3.5rem 0 3rem; }
+      .hero-mark { right: -28%; width: 32rem; max-width: 118vw; opacity: 0.07; }
+      section { padding: 2.75rem 0; }
+      .cta { width: 100%; justify-content: center; }
+      .journey { padding-left: 1.5rem; }
+      .step::before { left: -1.5rem; }
     }
   </style>
 </head>
 <body>
-  <svg class="glow-bg" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-    <defs>
-      <filter id="phosphor">
-        <feGaussianBlur in="SourceGraphic" stdDeviation="14" result="blur"/>
-        <feMerge>
-          <feMergeNode in="blur"/>
-          <feMergeNode in="blur"/>
-          <feMergeNode in="SourceGraphic"/>
-        </feMerge>
-      </filter>
-    </defs>
-    <g filter="url(#phosphor)">
-      <circle cx="470" cy="190" r="70" fill="none" stroke="#FFD60A" stroke-width="22"/>
-      <rect x="460" y="340" width="160" height="280" rx="6" fill="none" stroke="#FFD60A" stroke-width="22"/>
-      <path d="M 500 640 H 660 V 720 Q 660 860 520 860 H 370 Q 280 860 280 780 V 750 Q 280 710 330 710 H 410 Q 500 710 500 640 Z" fill="none" stroke="#FFD60A" stroke-width="22"/>
-    </g>
-  </svg>
+  <a class="skip-link" href="#main">Skip to content</a>
 
-  <header>
+  <header class="site-header">
     <div class="container">
-      <div class="mark">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-label="jeffols signature icon">
-          <rect width="1024" height="1024" rx="174" fill="#111827" stroke="#FFD60A" stroke-width="2"/>
-          <rect x="400" y="120" width="140" height="140" rx="70" fill="#FFD60A"/>
-          <rect x="460" y="340" width="160" height="280" rx="6" fill="#FFD60A"/>
-          <path d="M 500 640 H 660 V 720 Q 660 860 520 860 H 370 Q 280 860 280 780 V 750 Q 280 710 330 710 H 410 Q 500 710 500 640 Z" fill="#FFD60A"/>
+      <a class="brand" href="/" aria-label="Jeff Olsen, home">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1349.13 500.14" role="img" aria-label="Jeff Olsen">
+          <g transform="translate(-30.60 51.33) scale(0.40559)" fill="currentColor">
+            <circle cx="512" cy="190" r="70"/>
+            <rect x="502" y="340" width="160" height="280" rx="6"/>
+            <path d="M 542 640 L 702 640 L 702 720 Q 702 860 562 860 L 412 860 Q 322 860 322 780 L 322 750 Q 322 710 372 710 L 452 710 Q 542 710 542 640 Z"/>
+          </g>
+          <path transform="translate(338.13 319.87)" d="M93.4 -139.6V-39.2Q93.4 -29.8 90.30000000000001 -22.200000000000003Q87.2 -14.600000000000001 81.5 -9.200000000000001Q75.8 -3.8000000000000003 67.6 -0.8Q59.400000000000006 2.2 49.2 2.2Q29.8 2.2 19.0 -7.9Q8.200000000000001 -18.0 5.2 -34.800000000000004L29.6 -39.800000000000004Q31.400000000000002 -30.8 36.1 -25.9Q40.800000000000004 -21.0 49.0 -21.0Q56.800000000000004 -21.0 61.900000000000006 -25.9Q67.0 -30.8 67.0 -41.0V-118.0H23.0V-139.6ZM163.0 2.4000000000000004Q151.4 2.4000000000000004 142.3 -1.5Q133.2 -5.4 126.89999999999999 -12.5Q120.6 -19.6 117.19999999999999 -29.700000000000003Q113.8 -39.800000000000004 113.8 -52.400000000000006Q113.8 -64.8 117.1 -74.80000000000001Q120.4 -84.80000000000001 126.60000000000001 -91.9Q132.8 -99.0 141.8 -102.9Q150.8 -106.80000000000001 162.2 -106.80000000000001Q174.4 -106.80000000000001 183.4 -102.60000000000001Q192.4 -98.4 198.2 -91.2Q204.0 -84.0 206.9 -74.5Q209.8 -65.0 209.8 -54.2V-45.800000000000004H140.4V-43.2Q140.4 -31.8 146.8 -24.9Q153.2 -18.0 165.8 -18.0Q175.4 -18.0 181.5 -22.0Q187.60000000000002 -26.0 192.4 -32.2L206.2 -16.8Q199.8 -7.800000000000001 188.70000000000002 -2.7Q177.60000000000002 2.4000000000000004 163.0 2.4000000000000004ZM162.6 -87.60000000000001Q152.4 -87.60000000000001 146.4 -80.80000000000001Q140.4 -74.0 140.4 -63.2V-61.6H183.2V-63.400000000000006Q183.2 -74.2 177.9 -80.9Q172.60000000000002 -87.60000000000001 162.6 -87.60000000000001ZM234.60000000000002 -84.2H219.20000000000002V-104.4H234.60000000000002V-119.4Q234.60000000000002 -133.20000000000002 241.90000000000003 -140.60000000000002Q249.20000000000002 -148.0 263.40000000000003 -148.0H281.6V-127.60000000000001H260.20000000000005V-104.4H281.6V-84.2H260.20000000000005V0.0H234.60000000000002ZM301.6 -84.2H286.20000000000005V-104.4H301.6V-119.4Q301.6 -133.20000000000002 308.90000000000003 -140.60000000000002Q316.20000000000005 -148.0 330.40000000000003 -148.0H348.6V-127.60000000000001H327.20000000000005V-104.4H348.6V-84.2H327.20000000000005V0.0H301.6ZM464.0 2.4000000000000004Q450.20000000000005 2.4000000000000004 439.0 -2.2Q427.8 -6.800000000000001 419.9 -16.0Q412.0 -25.200000000000003 407.6 -38.6Q403.2 -52.0 403.2 -69.8Q403.2 -87.4 407.6 -100.9Q412.0 -114.4 419.9 -123.60000000000001Q427.8 -132.8 439.0 -137.4Q450.20000000000005 -142.0 464.0 -142.0Q477.8 -142.0 489.0 -137.4Q500.20000000000005 -132.8 508.20000000000005 -123.60000000000001Q516.2 -114.4 520.5 -100.9Q524.8 -87.4 524.8 -69.8Q524.8 -52.0 520.5 -38.6Q516.2 -25.200000000000003 508.20000000000005 -16.0Q500.20000000000005 -6.800000000000001 489.0 -2.2Q477.8 2.4000000000000004 464.0 2.4000000000000004ZM464.0 -21.0Q479.0 -21.0 487.9 -31.0Q496.8 -41.0 496.8 -59.0V-80.60000000000001Q496.8 -98.60000000000001 487.9 -108.60000000000001Q479.0 -118.60000000000001 464.0 -118.60000000000001Q449.0 -118.60000000000001 440.1 -108.60000000000001Q431.20000000000005 -98.60000000000001 431.20000000000005 -80.60000000000001V-59.0Q431.20000000000005 -41.0 440.1 -31.0Q449.0 -21.0 464.0 -21.0ZM572.6 0.0Q559.4000000000001 0.0 553.2 -6.6000000000000005Q547.0 -13.200000000000001 547.0 -25.200000000000003V-148.0H572.6V-20.400000000000002H586.4000000000001V0.0ZM637.0 2.4000000000000004Q622.0 2.4000000000000004 611.8 -2.7Q601.6 -7.800000000000001 593.8 -16.8L609.4 -32.0Q615.2 -25.400000000000002 622.1 -21.6Q629.0 -17.8 638.0 -17.8Q647.2 -17.8 651.3 -21.0Q655.4 -24.200000000000003 655.4 -29.8Q655.4 -34.4 652.5 -37.1Q649.6 -39.800000000000004 642.6 -40.800000000000004L632.2 -42.2Q615.2 -44.400000000000006 606.3 -51.900000000000006Q597.4 -59.400000000000006 597.4 -73.8Q597.4 -81.4 600.2 -87.5Q603.0 -93.60000000000001 608.2 -97.9Q613.4 -102.2 620.7 -104.5Q628.0 -106.80000000000001 637.0 -106.80000000000001Q644.6 -106.80000000000001 650.5 -105.70000000000002Q656.4 -104.60000000000001 661.2 -102.5Q666.0 -100.4 670.0 -97.30000000000001Q674.0 -94.2 677.8 -90.4L662.8 -75.4Q658.2 -80.2 651.8 -83.4Q645.4 -86.60000000000001 637.8 -86.60000000000001Q629.4 -86.60000000000001 625.7 -83.60000000000001Q622.0 -80.60000000000001 622.0 -75.8Q622.0 -70.60000000000001 625.1 -67.9Q628.2 -65.2 635.6 -64.0L646.2 -62.6Q680.0 -57.800000000000004 680.0 -31.8Q680.0 -24.200000000000003 676.9 -17.900000000000002Q673.8 -11.600000000000001 668.2 -7.1000000000000005Q662.6 -2.6 654.7 -0.09999999999999987Q646.8 2.4000000000000004 637.0 2.4000000000000004ZM741.8 2.4000000000000004Q730.1999999999999 2.4000000000000004 721.0999999999999 -1.5Q712.0 -5.4 705.7 -12.5Q699.4 -19.6 696.0 -29.700000000000003Q692.5999999999999 -39.800000000000004 692.5999999999999 -52.400000000000006Q692.5999999999999 -64.8 695.8999999999999 -74.80000000000001Q699.1999999999999 -84.80000000000001 705.3999999999999 -91.9Q711.5999999999999 -99.0 720.5999999999999 -102.9Q729.5999999999999 -106.80000000000001 741.0 -106.80000000000001Q753.1999999999999 -106.80000000000001 762.1999999999999 -102.60000000000001Q771.1999999999999 -98.4 777.0 -91.2Q782.8 -84.0 785.6999999999999 -74.5Q788.5999999999999 -65.0 788.5999999999999 -54.2V-45.800000000000004H719.1999999999999V-43.2Q719.1999999999999 -31.8 725.5999999999999 -24.9Q732.0 -18.0 744.5999999999999 -18.0Q754.1999999999999 -18.0 760.3 -22.0Q766.4 -26.0 771.1999999999999 -32.2L785.0 -16.8Q778.5999999999999 -7.800000000000001 767.5 -2.7Q756.4 2.4000000000000004 741.8 2.4000000000000004ZM741.4 -87.60000000000001Q731.1999999999999 -87.60000000000001 725.1999999999999 -80.80000000000001Q719.1999999999999 -74.0 719.1999999999999 -63.2V-61.6H762.0V-63.400000000000006Q762.0 -74.2 756.7 -80.9Q751.4 -87.60000000000001 741.4 -87.60000000000001ZM808.1999999999999 0.0V-104.4H833.8V-87.0H834.8Q838.0 -95.4 844.9 -101.10000000000001Q851.8 -106.80000000000001 864.0 -106.80000000000001Q880.2 -106.80000000000001 888.8 -96.20000000000002Q897.4 -85.60000000000001 897.4 -66.0V0.0H871.8V-63.400000000000006Q871.8 -74.60000000000001 867.8 -80.20000000000002Q863.8 -85.80000000000001 854.6 -85.80000000000001Q850.6 -85.80000000000001 846.9 -84.70000000000002Q843.1999999999999 -83.60000000000001 840.3 -81.5Q837.4 -79.4 835.5999999999999 -76.30000000000001Q833.8 -73.2 833.8 -69.0V0.0Z" fill="currentColor"/>
         </svg>
-        <h1>Jeff Olsen <span>/ jeffols</span></h1>
-      </div>
-      <p class="intro">
-        Distinguished engineer. I build systems that <strong>understand before they act</strong>.
-        Ontology, context engineering, and the deliberate pursuit of simplicity in complex domains.
-      </p>
+      </a>
+      <nav class="site-nav" aria-label="Primary">
+        <ul>
+          <li><a href="#work-on">Work</a></li>
+          <li><a href="#thinking">Thinking</a></li>
+          <li><a href="#writing">Writing</a></li>
+          <li><a href="#proof">Proof</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#connect">Connect</a></li>
+        </ul>
+      </nav>
     </div>
   </header>
 
-  <main>
-    <section>
+  <main id="main">
+    <section class="hero">
+      <img class="hero-mark" src="/assets/hero-mark.png" alt="" aria-hidden="true" width="1024" height="1024" decoding="async">
       <div class="container">
-        <h2>Thinking</h2>
+        <h1>I make hidden work and complex systems easier to see.</h1>
+        <p class="lede">
+          I write and build practical models for organizational delivery, context engineering,
+          knowledge systems, and enterprise technology.
+        </p>
+        <div class="cta-row">
+          <a class="cta cta-primary" href="https://jeffols.substack.com">Read Working Faster</a>
+          <a class="cta" href="#work-on">Explore the work</a>
+          <a class="cta" href="https://www.linkedin.com/in/jeffols/">Connect on LinkedIn</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="work-on">
+      <div class="container">
+        <p class="eyebrow">What I work on</p>
+        <h2 class="section-title">Two paths, one idea</h2>
+        <p class="section-intro">
+          Better action depends on seeing the system more clearly. One path makes the real state of
+          organizational work visible. The other makes meaning, evidence, and constraints visible to
+          software and AI systems.
+        </p>
+        <div class="paths">
+          <div class="card path">
+            <h3>Working Faster</h3>
+            <p class="path-desc">
+              Practical systems thinking for seeing where work really is, where time goes, and what is
+              worth changing.
+            </p>
+            <dl>
+              <dt>Start here</dt>
+              <dd><a href="https://jeffols.substack.com/p/on-track-is-not-a-state">"On Track" Is Not a State</a></dd>
+              <dt>Core concepts</dt>
+              <dd>Calendar Time and Touch Time. Wait Time. Opaque Status. Progress Shapes. The Second Question.</dd>
+              <dt>Current focus</dt>
+              <dd>Publishing the framework one piece at a time, and building a field guide from the vocabulary.</dd>
+            </dl>
+            <p class="path-out">
+              <a href="https://jeffols.substack.com">Read the series on Substack</a>
+            </p>
+          </div>
+
+          <div class="card path">
+            <h3>Context Engineering</h3>
+            <p class="path-desc">
+              Systems that organize meaning, evidence, and constraints before people or AI act.
+            </p>
+            <dl>
+              <dt>The idea</dt>
+              <dd>Engineer the information environment rather than adding rules. Ontology, retrieval, evidence, and structure carry more weight than instructions.</dd>
+              <dt>Core concepts</dt>
+              <dd>Ontology as architecture. Context before action. Knowledge structure. Structured prompt-driven development. Agent and system architecture.</dd>
+              <dt>Current focus</dt>
+              <dd>Most of the applied work here is proprietary and stays unpublished. The models behind it come from self-directed projects and steady practice, and those are what I can share.</dd>
+            </dl>
+            <p class="path-out">
+              <a href="https://github.com/jeffols">Public code on GitHub</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="thinking">
+      <div class="container">
+        <p class="eyebrow">Point of view</p>
+        <h2 class="section-title">How I think</h2>
         <div class="principles">
-          <div class="principle">
+          <div class="card principle">
             <h3>Ontology as architecture</h3>
             <p>Systems inherit the shape of the concepts they model. Get the ontology right and the code writes itself. Get it wrong and no amount of engineering saves you.</p>
           </div>
-          <div class="principle">
+          <div class="card principle">
             <h3>Context over instruction</h3>
             <p>The best systems don't need more rules. They need better context. Engineer the information environment and let intelligence emerge from structure.</p>
           </div>
-          <div class="principle">
+          <div class="card principle">
             <h3>Simplicity is the residue of understanding</h3>
             <p>Complexity is not a problem to manage. It is a symptom of incomplete comprehension. Simplify by understanding more deeply, not by hiding more aggressively.</p>
           </div>
@@ -275,9 +441,45 @@
       </div>
     </section>
 
-    <section>
+    <section id="writing">
       <div class="container">
-        <h2>The Arc</h2>
+        <p class="eyebrow">Featured thinking</p>
+        <h2 class="section-title">Writing</h2>
+        <p class="section-intro">
+          Working Faster is a series about where delivery time actually goes. Published essays, newest first.
+        </p>
+        <div class="essays">
+          <a class="card essay" href="https://jeffols.substack.com/p/on-track-is-not-a-state">
+            <h3>"On Track" Is Not a State</h3>
+            <p class="essay-what">
+              "On track" is a claim about the date. It is not a description of the work. Twenty minutes
+              of real effort and a week in someone else's queue sound exactly the same, and the calendar
+              moves either way.
+            </p>
+            <p class="essay-take"><strong>You will learn:</strong> how to hear the difference between a status and a state, and the one extra question that gives a wait an owner and a next signal.</p>
+          </a>
+          <a class="card essay" href="https://jeffols.substack.com/p/complaints-dont-travel-upward-costs">
+            <h3>Complaints Don't Travel Upward. Costs Do.</h3>
+            <p class="essay-what">
+              A complaint names a feeling, and a feeling can only be sympathized with or dismissed. A
+              cost names a wait, a size, and an ask, in the terms the person deciding already tracks.
+            </p>
+            <p class="essay-take"><strong>You will learn:</strong> how to turn a recurring friction you do not own into a number someone can act on, and why keeping the friction can still be the right answer.</p>
+          </a>
+        </div>
+        <p class="more-link"><a href="https://jeffols.substack.com/archive">All essays on Substack</a></p>
+      </div>
+    </section>
+
+    <section id="proof">
+      <div class="container">
+        <p class="eyebrow">Proof of work</p>
+        <h2 class="section-title">The arc</h2>
+        <p class="section-intro">
+          The ideas above did not arrive as opinions. They came out of building. Most of this work is
+          applied inside organizations and is not public, so what follows is the sequence rather than a
+          set of links.
+        </p>
         <div class="journey">
           <div class="step">
             <h3>Knowledge Catalog</h3>
@@ -293,7 +495,8 @@
           </div>
           <div class="step">
             <h3>Working Faster</h3>
-            <p>Turned the lens on the craft itself. What does high-leverage engineering look like when you stop confusing motion for progress?</p>
+            <p>Turned the lens on the craft itself. What does high-leverage engineering look like when you stop confusing motion for progress? This one became a public series.</p>
+            <a class="step-link" href="#writing">Read the essays</a>
           </div>
           <div class="step">
             <h3>Structured Prompt-Driven Development</h3>
@@ -306,12 +509,62 @@
         </div>
       </div>
     </section>
+
+    <section id="about" class="about">
+      <div class="container">
+        <p class="eyebrow">About</p>
+        <h2 class="section-title">Jeff Olsen</h2>
+        <p>
+          Distinguished engineer and systems thinker working across enterprise architecture, AI
+          enablement, knowledge systems, operational resilience, and organizational delivery. I focus
+          on turning complex, hidden systems into models people can understand and use.
+        </p>
+        <p>
+          <a href="https://www.linkedin.com/in/jeffols/">Full career detail is on LinkedIn</a>.
+        </p>
+      </div>
+    </section>
+
+    <section id="connect">
+      <div class="container">
+        <p class="eyebrow">Subscribe and connect</p>
+        <h2 class="section-title">Where to find me</h2>
+        <div class="connect">
+          <a class="card" href="https://jeffols.substack.com">
+            <h3>Substack</h3>
+            <p>Working Faster, one essay at a time. Subscribe to get new pieces as they publish.</p>
+          </a>
+          <a class="card" href="https://www.linkedin.com/in/jeffols/">
+            <h3>LinkedIn</h3>
+            <p>Professional detail, shorter posts, and the best way to reach me directly.</p>
+          </a>
+          <a class="card" href="https://github.com/jeffols">
+            <h3>GitHub</h3>
+            <p>Public code, experiments, and the brand system that generates this site's assets.</p>
+          </a>
+        </div>
+      </div>
+    </section>
   </main>
 
   <footer>
     <div class="container">
-      <p>&copy; Jeff Olsen</p>
-      <p><a href="https://www.linkedin.com/in/jeffols/">LinkedIn</a></p>
+      <div class="footer-brand">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-label="jeffols mark">
+          <circle cx="512" cy="190" r="70" fill="currentColor"/>
+          <rect x="502" y="340" width="160" height="280" rx="6" fill="currentColor"/>
+          <path d="M 542 640 L 702 640 L 702 720 Q 702 860 562 860 L 412 860 Q 322 860 322 780 L 322 750 Q 322 710 372 710 L 452 710 Q 542 710 542 640 Z" fill="currentColor"/>
+        </svg>
+        <p>Jeff Olsen <span>/ jeffols</span></p>
+      </div>
+      <div class="footer-links">
+        <a href="https://jeffols.substack.com">Substack</a>
+        <a href="https://www.linkedin.com/in/jeffols/">LinkedIn</a>
+        <a href="https://github.com/jeffols">GitHub</a>
+      </div>
+      <p class="footer-legal">
+        &copy; Jeff Olsen. Make hidden systems visible.
+      </p>
     </div>
   </footer>
 </body>

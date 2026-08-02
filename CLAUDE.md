@@ -1,0 +1,96 @@
+# jeffols.github.io
+
+Personal site for Jeff Olsen / jeffols. Serves `www.jeffols.com` from GitHub
+Pages (`CNAME`). One page, no build step.
+
+## Brand is upstream
+
+`../jeff-brand-logo` is the canonical brand system. **`BRAND.md` there is the
+strategic source of truth** for the mark, palettes, positioning, and voice. This
+repo owns implementation, content, deployment, page accessibility, and
+performance. It owns *copies* of generated assets. It does not own the mark.
+
+| Question | File in `../jeff-brand-logo` |
+|---|---|
+| What do I copy, and where does it go? | `docs/site-handoff.md` |
+| Which mark, what size, which file? | `docs/logo-usage.md` |
+| What goes in which section? | `docs/website-direction.md` |
+| Contrast numbers, transparent-mark rule | `docs/accessibility.md` |
+| Why is it this way? | `docs/decisions/0001`–`0007` |
+
+## Rules that are easy to break
+
+- **Never redraw or inline the mark geometry.** Always reference a generated
+  asset. A geometry change upstream cannot reach hand-copied path data and
+  nothing fails loudly when they diverge. Three inlined copies were removed on
+  2026-08-01; do not reintroduce one. `BRAND.md` section 21.
+- **`currentColor` inherits only when the SVG is inlined**, not through
+  `<img src>`. Through `<img>` an SVG is an isolated document with no parent
+  colour and a `-mono` mark renders black. Inline the mono files; use a palette
+  variant for `<img>`.
+- **Do not ship a subset of iA Writer Duo under its own name.** It carries the
+  Reserved Font Names `iA Writer` and `Plex`, and OFL clause 3 forbids a Modified
+  Version from using them. Subsetting produces a Modified Version. The `.woff2`
+  files here are container conversions only, no glyph subsetting and no name-table
+  edits, so the family name stays valid. Inter has no reserved name and may be
+  subset freely.
+- **Do not choose a typeface.** Decision `0007` settled it: Inter for UI,
+  navigation, and headings; iA Writer Duo S for essays and long-form.
+- **Static HTML and CSS only.** No framework, no build step, no CDN request. All
+  styles are inline in `index.html`; all assets are served from this repo.
+- Ship the font licence files. OFL requires it.
+- `og:image` must be an absolute URL. Relative paths silently fail on most
+  platforms.
+- Do not publish private employer detail. Keep every claim supportable.
+
+## Layout
+
+```
+index.html              the whole site: markup + inline CSS
+CNAME                   www.jeffols.com
+favicon.*, apple-touch-icon.png, android-chrome-*.png, site.webmanifest
+assets/hero-mark.png    rotational mark, transparent, hero background
+assets/social-preview.png   1200x630 Open Graph card
+assets/fonts/           InterVariable + iA Writer Duo S woff2, with licences
+```
+
+## Re-syncing brand assets
+
+Assets are versioned by tag upstream; `v2.0.0` is current. When the brand repo
+changes: read `docs/decisions/` for what moved, re-copy per `docs/site-handoff.md`,
+and regenerate the woff2 conversions if a font changed.
+
+**Deliberate divergence from the handoff copy list:** `iAWriterDuoS-Bold` is not
+shipped. Nothing on this page sets bold in the essay register, so the file and its
+`@font-face` rule would both be dead weight. Convert and declare it when long-form
+content that needs it lands. Everything else on the list is present.
+
+**iA Writer Duo S** is a container conversion only. Never subset it. Regenerate with:
+
+```python
+from fontTools.ttLib import TTFont
+f = TTFont("iAWriterDuoS-Regular.ttf"); f.flavor = "woff2"
+f.save("iAWriterDuoS-Regular.woff2")
+```
+
+**Inter** is subset to Latin, which decision `0007` explicitly permits because Inter
+carries no Reserved Font Name. 344 KB to 60 KB, with both variable axes (`wght`
+100-900, `opsz`) preserved and the rendered page pixel-identical. Regenerate with:
+
+```bash
+pyftsubset InterVariable.ttf --output-file=InterVariable.woff2 --flavor=woff2 \
+  --layout-features=kern,liga,calt,ccmp,locl,mark,mkmk --name-IDs='*' --name-legacy \
+  --notdef-outline --drop-tables+=DSIG \
+  --unicodes=U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,\
+U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD,\
+U+2018-2019,U+201C-201D,U+2026
+```
+
+If page copy ever needs a character outside that range, widen `--unicodes` and
+re-subset. The page is currently pure ASCII.
+
+## Run
+
+```bash
+python3 -m http.server 8080    # then open http://localhost:8080
+```
