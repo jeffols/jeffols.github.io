@@ -16,7 +16,8 @@ performance. It owns *copies* of generated assets. It does not own the mark.
 | Which mark, what size, which file? | `docs/logo-usage.md` |
 | What goes in which section? | `docs/website-direction.md` |
 | Contrast numbers, transparent-mark rule | `docs/accessibility.md` |
-| Why is it this way? | `docs/decisions/0001`–`0007` |
+| Why is it this way? | `docs/decisions/0001`–`0008` |
+| What is decided vs still open? | `BRAND.md` section 23 |
 
 ## Rules that are easy to break
 
@@ -41,7 +42,48 @@ performance. It owns *copies* of generated assets. It does not own the mark.
 - Ship the font licence files. OFL requires it.
 - `og:image` must be an absolute URL. Relative paths silently fail on most
   platforms.
+- **No colons and no em dashes in published copy.** `BRAND.md` section 2. The
+  patterns that keep slipping through are `You will learn:`, `Note:`, and a noun
+  list followed by a colon and its explanation. Rewrite as two sentences. Applies
+  to headings, card labels, and meta descriptions, not to code comments.
+- **Do not publish the internal organizing phrase.** `BRAND.md` section 3 keeps a
+  thinking tool separate from the publishable formulations. The internal one
+  shipped in the footer once and nothing failed when it did.
+- **Positioning changes are brand changes.** Anything touching the hero, the About
+  section, or a path description changes `BRAND.md` in the same pass, and adds a
+  decision record if it settles an open question. Channel copy in
+  `docs/online-presence.md` goes stale whenever positioning moves.
 - Do not publish private employer detail. Keep every claim supportable.
+
+## Working agreement
+
+Jeff explores by circling an idea, revealing one facet per message rather than
+stating a full spec up front. Each message looks like a complete requirement and
+is actually one more piece of a model still being assembled.
+
+Answering each one with finished, shippable work creates false convergence. The
+next facet then reads as a change of direction rather than an addition, so the
+artifact gets rebuilt. The hero was drafted, shipped, and rewritten across six
+commits in a single day for exactly this reason.
+
+His own statement of the fix, which is the standard here. **Build on past
+decisions, focus on the goal, park valuable noise, tie off work.**
+
+In practice:
+
+- **Ask before drafting.** What has not been said that would change this? Surface
+  the adjacent unknowns instead of waiting to be corrected on them.
+- **Skeletons while exploring. Finished copy only on "ship it."** Name which mode
+  is in play.
+- **Park out loud.** A good tangent goes on the ledger, not into the work. Parked
+  brand decisions belong in `BRAND.md` section 23, channel items in
+  `docs/online-presence.md`, site items in `docs/website-direction.md`.
+- **One commit at convergence**, not one per exchange.
+- **Read the ledger back unprompted.** Decided, parked, open. Open items sat
+  untouched for a day because nothing restated them.
+- **Circling is not the defect.** Pushing for early convergence costs the
+  cross-domain synthesis that is the actual strength. The job is to hold the
+  thread, not to force a decision.
 
 ## Layout
 
