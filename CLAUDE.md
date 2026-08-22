@@ -39,6 +39,21 @@ performance. It owns *copies* of generated assets. It does not own the mark.
   navigation, and headings; iA Writer Duo S for essays and long-form.
 - **Static HTML and CSS only.** No framework, no build step, no CDN request. All
   styles are inline in `index.html`; all assets are served from this repo.
+  **Two deliberate exceptions, 2026-08-22:** Cloudflare Web Analytics at the end
+  of `<body>`, and Google Analytics 4 at the end of `<head>`. Jeff wanted visitor
+  measurement and accepted the cost. Cloudflare's automatic injection was rejected
+  as a loophole, since the browser makes the request either way and the repo would
+  no longer show that it happens.
+
+  **Why both, not one.** They measure the same thing, but this site's audience is
+  engineers and ad blockers stop GA far more often than they stop Cloudflare's
+  beacon. GA alone could undercount real readers badly enough to suggest nobody
+  visits. Read Cloudflare for the visitor count, GA for behaviour and acquisition.
+  Drop GA first if either goes: it is the one carrying cookies and consent
+  obligations.
+
+  These two are the whole exception. Anything else asking for a CDN request needs
+  its own decision, not this as precedent.
 - Ship the font licence files. OFL requires it.
 - `og:image` must be an absolute URL. Relative paths silently fail on most
   platforms.

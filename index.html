@@ -324,6 +324,17 @@
       .step::before { left: -1.5rem; }
     }
   </style>
+
+  <!-- Google Analytics 4. Placed at the end of head rather than the top so the
+       meta, Open Graph, and font block stays contiguous. gtag is async, so the
+       position costs nothing. See the CDN exception note in CLAUDE.md. -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-8WD69MDWRH"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-8WD69MDWRH');
+  </script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -580,5 +591,11 @@
       </p>
     </div>
   </footer>
+
+  <!-- Cloudflare Web Analytics. A deliberate exception to the no-CDN-request
+       rule in CLAUDE.md, and the only third-party runtime request on the site.
+       No cookies, no cross-site identifiers. The token is public by design and
+       identifies the site, not a visitor. -->
+  <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "05eb9dc9de534b5ebb79dbfdb1c7d15e"}'></script>
 </body>
 </html>
