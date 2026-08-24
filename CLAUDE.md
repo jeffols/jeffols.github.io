@@ -1,7 +1,12 @@
 # jeffols.github.io
 
-Personal site for Jeff Olsen / jeffols. Serves `www.jeffols.com` from GitHub
-Pages (`CNAME`). One page, no build step.
+Personal site for Jeff Olsen / jeffols. Serves `jeffols.com` from GitHub Pages
+(`CNAME`). One page, no build step.
+
+**The apex is canonical, since 2026-08-24.** GitHub Pages redirects every other
+hostname to whatever `CNAME` names, so `www` already 301s to the apex with no
+Cloudflare rule involved. Do not add a redirect rule for it. One pointing the
+other way would fight the origin and loop.
 
 ## Brand is upstream
 
@@ -104,7 +109,7 @@ In practice:
 
 ```
 index.html              the whole site: markup + inline CSS
-CNAME                   www.jeffols.com
+CNAME                   jeffols.com
 favicon.*, apple-touch-icon.png, android-chrome-*.png, site.webmanifest
 assets/hero-mark.png    rotational mark, transparent, hero background
 assets/social-preview.png   1200x630 Open Graph card
