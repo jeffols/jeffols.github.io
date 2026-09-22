@@ -21,6 +21,22 @@
   <meta name="twitter:description" content="Sixty five readings across six phases, sequenced through prompt, loop, graph, and knowledge representation.">
   <meta name="twitter:image" content="https://jeffols.com/assets/social-preview.png">
 
+  <!-- Google Analytics 4. Placed at the end of head rather than the top so the
+       meta, Open Graph, and font block stays contiguous. gtag is async, so the
+       position costs nothing. See the CDN exception note in CLAUDE.md. -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-8WD69MDWRH"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    // cookie_domain 'none' makes _ga host-only. The default, 'auto', writes it
+    // to .jeffols.com, which sends it to every tunnel subdomain and lets those
+    // origins read and write cookies this site receives. code.jeffols.com runs
+    // an editor, so that boundary should stay closed. Cross-subdomain session
+    // stitching is the cost, and nothing else on the domain runs GA.
+    gtag('config', 'G-8WD69MDWRH', { cookie_domain: 'none' });
+  </script>
+
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
@@ -268,6 +284,24 @@
     .build .from {
       font-family: var(--font-essay); font-size: 0.68rem; letter-spacing: 0.05em;
       text-transform: uppercase; color: var(--accent); margin-top: 0.55rem; opacity: 0.8;
+    }
+
+    .more {
+      border-top: 1px solid var(--rule); padding-top: 1.4rem;
+      display: flex; flex-direction: column; gap: 0.85rem;
+    }
+    .more h2 {
+      font-family: var(--font-essay); font-size: 0.72rem; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--accent); font-weight: 400;
+    }
+    .more p { font-family: var(--font-essay); font-size: 0.92rem; color: var(--text-dim); max-width: var(--measure); }
+    .more ul { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+    .more li { font-size: 0.97rem; }
+    .more li a { text-decoration: none; border-bottom: 1px solid var(--rule); }
+    .more li a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+    .more .where {
+      font-family: var(--font-essay); font-size: 0.7rem; color: var(--text-dim);
+      text-transform: uppercase; letter-spacing: 0.05em; margin-left: 0.5rem;
     }
 
     footer {
@@ -763,6 +797,17 @@
     </div>
   </section>
 
+  <section class="more">
+    <h2>Working through it</h2>
+    <p>Last updated 2026-09-22. I am reading this in order and annotating as I go, so entries change as I reach them. Progress is kept in this browser, so checking things off survives a return visit.</p>
+    <ul>
+      <li><a href="https://jeffols.substack.com">Working Faster</a><span class="where">my newsletter</span></li>
+      <li><a href="https://jeffols.substack.com/p/on-track-is-not-a-state">"On Track" Is Not a State</a><span class="where">essay</span></li>
+      <li><a href="https://jeffols.substack.com/p/complaints-dont-travel-upward-costs">Complaints Don't Travel Upward. Costs Do.</a><span class="where">essay</span></li>
+      <li><a href="/">jeffols.com</a><span class="where">everything else</span></li>
+    </ul>
+  </section>
+
   <footer>
     Assembled 2026-09-22. 556 candidate posts screened by topic across a set of newsletters, 65 selected and sequenced. Five were read in full to write the annotations, 0.01, 1.04, 2.02, 3.02 and 3.10. The rest are annotated from title, subtitle, publication date and audience metadata, so treat those notes as informed routing rather than review. The decision model covered in 3.10 through 3.12 launched in September 2026, so its details come from 3.10 plus independent reporting and are worth confirming against primary sources. Paid labels describe the post, not any particular reader's access. Progress is stored in this browser only.
   </footer>
@@ -804,5 +849,11 @@
     paint();
   })();
 </script>
+
+<!-- Cloudflare Web Analytics. A deliberate exception to the no-CDN-request
+     rule in CLAUDE.md, and the only third-party runtime request on the site.
+     No cookies, no cross-site identifiers. The token is public by design and
+     identifies the site, not a visitor. -->
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "05eb9dc9de534b5ebb79dbfdb1c7d15e"}'></script>
 </body>
 </html>
