@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Agent Engineering, a reading plan / jeffols</title>
+  <meta name="description" content="A sequenced reading plan on agent engineering. Prompt, loop, graph, and the knowledge representation layer underneath all three.">
+  <meta name="robots" content="noindex, nofollow">
+
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#111827">
+
+  <style>
+    /* Typography: decision 0007 in ../jeff-brand-logo/docs/decisions/.
+       Inter for UI, navigation and headings. iA Writer Duo S for prose.
+       Same two faces and the same palette tokens as index.html. */
+    @font-face { font-family: 'Inter'; font-weight: 100 900; font-style: normal; font-display: swap;
+                 src: url('/assets/fonts/InterVariable.woff2') format('woff2'); }
+    @font-face { font-family: 'iA Writer Duo S'; font-weight: 400; font-style: normal; font-display: swap;
+                 src: url('/assets/fonts/iAWriterDuoS-Regular.woff2') format('woff2'); }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #111827;
+      --surface: #1a2235;
+      --surface-2: #202b42;
+      --text: #F8FAFC;
+      --text-dim: #A9B6C9;
+      --accent: #FFD60A;
+      --rule: rgba(148, 163, 184, 0.16);
+      --rule-soft: rgba(148, 163, 184, 0.09);
+      --font-ui: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --font-essay: 'iA Writer Duo S', ui-monospace, SFMono-Regular, monospace;
+      --measure: 62ch;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important;
+                               transition-duration: 0.01ms !important; }
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-ui);
+      font-size: 17px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: inherit; }
+    a:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+    .wrap {
+      max-width: 52rem;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 6rem;
+      display: flex;
+      flex-direction: column;
+      gap: 3.25rem;
+    }
+
+    .home {
+      font-family: var(--font-essay);
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      text-decoration: none;
+      align-self: flex-start;
+    }
+    .home:hover { color: var(--accent); }
+
+    /* masthead */
+    .mast { display: flex; flex-direction: column; gap: 1rem; }
+    .eyebrow {
+      font-family: var(--font-essay);
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+    h1 {
+      font-size: clamp(2rem, 5.5vw, 3rem);
+      line-height: 1.1;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      text-wrap: balance;
+    }
+    .standfirst {
+      font-family: var(--font-essay);
+      font-size: 1.02rem;
+      color: var(--text-dim);
+      max-width: 46ch;
+      text-wrap: pretty;
+    }
+    .census {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem 1.75rem;
+      font-family: var(--font-essay);
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      border-top: 1px solid var(--rule);
+      padding-top: 0.9rem;
+      font-variant-numeric: tabular-nums;
+    }
+    .census b { color: var(--accent); font-weight: 400; }
+
+    /* thesis */
+    .thesis {
+      background: var(--surface);
+      border-left: 3px solid var(--accent);
+      padding: 1.5rem 1.6rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+    }
+    .thesis h2 {
+      font-family: var(--font-essay);
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 400;
+    }
+    .thesis p { font-family: var(--font-essay); font-size: 0.95rem; max-width: var(--measure); color: var(--text-dim); }
+    .thesis p b { color: var(--text); font-weight: 400; }
+    .arc {
+      font-family: var(--font-essay);
+      font-size: 0.85rem;
+      color: var(--accent);
+      background: var(--surface-2);
+      padding: 0.75rem 0.9rem;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+    blockquote {
+      border-left: 2px solid var(--rule);
+      padding-left: 1rem;
+      font-family: var(--font-essay);
+      font-size: 0.98rem;
+      color: var(--text);
+    }
+
+    /* legend + progress */
+    .legend {
+      display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; align-items: center;
+      font-family: var(--font-essay); font-size: 0.75rem; color: var(--text-dim);
+    }
+    .legend .l { display: inline-flex; align-items: center; gap: 0.45rem; }
+
+    .chip {
+      font-family: var(--font-essay);
+      font-size: 0.62rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.18rem 0.42rem;
+      white-space: nowrap;
+    }
+    .chip.free { color: var(--bg); background: var(--accent); }
+    .chip.paid { color: var(--text-dim); background: var(--surface-2); }
+
+    .progress {
+      display: flex; align-items: baseline; gap: 0.75rem;
+      font-family: var(--font-essay); font-size: 0.78rem; color: var(--text-dim);
+    }
+    .bar { flex: 1; height: 3px; background: var(--rule); position: relative; overflow: hidden; }
+    .bar i { position: absolute; inset: 0 auto 0 0; width: 0%; background: var(--accent); transition: width 0.25s ease; }
+    #ptally { color: var(--accent); font-variant-numeric: tabular-nums; }
+
+    /* phases */
+    .phase { display: flex; flex-direction: column; gap: 1.1rem; }
+    .phead {
+      display: grid; grid-template-columns: 3rem 1fr; gap: 0 1rem; align-items: baseline;
+      border-bottom: 1px solid var(--rule); padding-bottom: 0.75rem;
+    }
+    .pnum {
+      font-family: var(--font-essay); font-size: 1.5rem; color: var(--accent);
+      font-variant-numeric: tabular-nums; line-height: 1;
+    }
+    .phead h2 { font-size: 1.45rem; font-weight: 700; letter-spacing: -0.015em; line-height: 1.2; text-wrap: balance; }
+    .pmeta {
+      grid-column: 2; font-family: var(--font-essay); font-size: 0.72rem;
+      letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-dim); margin-top: 0.45rem;
+    }
+    .ppurpose {
+      grid-column: 2; font-family: var(--font-essay); font-size: 0.93rem;
+      color: var(--text-dim); margin-top: 0.6rem; max-width: var(--measure);
+    }
+
+    .records { display: flex; flex-direction: column; }
+    .rec {
+      display: grid; grid-template-columns: 5rem 1fr; gap: 0 1rem;
+      padding: 0.95rem 0; border-bottom: 1px solid var(--rule-soft); align-items: start;
+    }
+    .rec:last-child { border-bottom: none; }
+    .rail { display: flex; flex-direction: column; gap: 0.45rem; align-items: flex-start; }
+    .cn { font-family: var(--font-essay); font-size: 0.76rem; color: var(--text-dim); font-variant-numeric: tabular-nums; }
+
+    .body-col { display: flex; flex-direction: column; gap: 0.3rem; }
+    .rec h3 { font-size: 1rem; font-weight: 600; line-height: 1.35; text-wrap: pretty; }
+    .rec h3 a { text-decoration: none; border-bottom: 1px solid var(--rule); }
+    .rec h3 a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+    .src {
+      font-family: var(--font-essay); font-size: 0.7rem; letter-spacing: 0.04em;
+      color: var(--text-dim); text-transform: uppercase;
+    }
+    .why {
+      font-family: var(--font-essay); font-size: 0.9rem; color: var(--text-dim);
+      max-width: var(--measure); margin-top: 0.15rem;
+    }
+    .why b { color: var(--text); font-weight: 400; }
+
+    .tick {
+      appearance: none; -webkit-appearance: none;
+      width: 0.95rem; height: 0.95rem; border: 1px solid var(--text-dim);
+      background: transparent; cursor: pointer; flex: none; position: relative;
+    }
+    .tick:checked { background: var(--accent); border-color: var(--accent); }
+    .tick:checked::after {
+      content: ""; position: absolute; left: 0.25rem; top: 0.08rem;
+      width: 0.27rem; height: 0.5rem; border: solid var(--bg); border-width: 0 2px 2px 0;
+      transform: rotate(42deg);
+    }
+    .rec.done h3 a { color: var(--text-dim); text-decoration: line-through; text-decoration-thickness: 1px; }
+    .rec.done .why { opacity: 0.55; }
+
+    /* concept note */
+    .note {
+      background: var(--surface); border-left: 3px solid var(--accent);
+      padding: 1.2rem 1.3rem; display: flex; flex-direction: column; gap: 0.7rem;
+    }
+    .note h4 {
+      font-family: var(--font-essay); font-size: 0.68rem; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--accent); font-weight: 400;
+    }
+    .note p { font-family: var(--font-essay); font-size: 0.92rem; color: var(--text-dim); max-width: var(--measure); }
+    .note p b { color: var(--text); font-weight: 400; }
+    .note p.q { color: var(--text); }
+
+    /* builds */
+    h2.sect { font-size: 1.45rem; font-weight: 700; letter-spacing: -0.015em; margin-bottom: 0.35rem; }
+    .sectlead { font-family: var(--font-essay); font-size: 0.93rem; color: var(--text-dim); max-width: var(--measure); margin-bottom: 1.25rem; }
+    section { display: flex; flex-direction: column; }
+    .builds { display: flex; flex-direction: column; gap: 1rem; }
+    .build { display: grid; grid-template-columns: 2rem 1fr; gap: 0 0.9rem; background: var(--surface); padding: 1.15rem 1.25rem; }
+    .build .bn { font-family: var(--font-essay); font-size: 0.95rem; color: var(--accent); font-variant-numeric: tabular-nums; }
+    .build h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.4rem; }
+    .build p { font-family: var(--font-essay); font-size: 0.9rem; color: var(--text-dim); max-width: var(--measure); }
+    .build .from {
+      font-family: var(--font-essay); font-size: 0.68rem; letter-spacing: 0.05em;
+      text-transform: uppercase; color: var(--accent); margin-top: 0.55rem; opacity: 0.8;
+    }
+
+    footer {
+      border-top: 1px solid var(--rule); padding-top: 1.1rem;
+      font-family: var(--font-essay); font-size: 0.75rem; color: var(--text-dim);
+      max-width: var(--measure); line-height: 1.7;
+    }
+
+    @media (max-width: 34rem) {
+      .rec { grid-template-columns: 1fr; gap: 0.5rem; }
+      .rail { flex-direction: row; align-items: center; gap: 0.6rem; }
+      .phead { grid-template-columns: 1fr; gap: 0.3rem; }
+      .pmeta, .ppurpose { grid-column: 1; }
+      .build { grid-template-columns: 1fr; gap: 0.3rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <a class="home" href="/">&larr; jeffols.com</a>
+
+  <header class="mast">
+    <div class="eyebrow">Reading plan</div>
+    <h1>Agent Engineering</h1>
+    <p class="standfirst">Four weeks through prompt, loop, graph, and the knowledge representation layer underneath all three.</p>
+    <div class="census">
+      <span><b>65</b> readings</span>
+      <span><b>6</b> phases</span>
+      <span><b>~18</b> hours</span>
+      <span>revised <b>2026-09-22</b></span>
+    </div>
+  </header>
+
+  <div class="thesis">
+    <h2>The thesis</h2>
+    <p>No single source states this, but several trace the same progression independently. Read in order, it is a curriculum rather than a pile of links.</p>
+    <div class="arc">prompt engineering &rarr; context engineering &rarr; loop engineering &rarr; graph engineering</div>
+    <p>Progressive disclosure is the mechanism that makes it affordable. Schema constrained state is the memory and decision layer. And what separates a graph from an expensive loop is one rule.</p>
+    <blockquote>A graph is a loop with something that can contradict it.</blockquote>
+    <p><b>Phase 4 is the phase most people skip.</b> The agent memory field has converged on schema constrained knowledge graphs with temporal facts, which is ontology engineering, a discipline with thirty years of prior art behind it. Reading the foundations makes the rest stop looking like novelty.</p>
+  </div>
+
+  <div class="legend">
+    <span class="l"><span class="chip free">Free</span> public post</span>
+    <span class="l"><span class="chip paid">Paid</span> behind the publication paywall</span>
+  </div>
+
+  <div class="progress">
+    <span>Progress</span>
+    <span class="bar"><i id="pfill"></i></span>
+    <span id="ptally">0 / 65</span>
+  </div>
+
+  <!-- PHASE 0 -->
+  <div class="phase">
+    <div class="phead">
+      <div class="pnum">0</div>
+      <h2>The load bearing idea</h2>
+      <div class="pmeta">45 minutes &middot; read before anything else</div>
+      <p class="ppurpose">One post. It becomes the filter the other 64 get judged through, including the ones that contradict it.</p>
+    </div>
+    <div class="records">
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="0.01"><span class="cn">0.01</span><span class="chip free">Free</span></div>
+        <div class="body-col"><h3><a href="https://www.the-ai-corner.com/p/graph-engineering-verification-problem">Forget Loop Engineering. It's all about Graph Engineering Now</a></h3>
+        <div class="src">The AI Corner &middot; 2026-09-02</div>
+        <p class="why">Verification anchors. A loop optimises the one number it can see, by any route available, including routes nobody would have approved. Multi agent verification is consensus theater, since identical weights share identical blind spots, and parallel verification costs 10 to 100 percent <b>more</b> rather than less. The rule that survives is that on every critical path at least one node must be non probabilistic.</p></div></div>
+    </div>
+  </div>
+
+  <!-- PHASE 1 -->
+  <div class="phase">
+    <div class="phead">
+      <div class="pnum">1</div>
+      <h2>The arc, and the mechanism that pays for it</h2>
+      <div class="pmeta">Week 1 &middot; ~3 hours &middot; 6 readings</div>
+      <p class="ppurpose">The vocabulary shift, then progressive disclosure, the three tier pattern that makes large capability libraries affordable. Everything in Phase 2 assumes it.</p>
+    </div>
+    <div class="records">
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="1.01"><span class="cn">1.01</span><span class="chip free">Free</span></div>
+        <div class="body-col"><h3><a href="https://blog.dailydoseofds.com/p/prompt-engineering-and-loop-engineering">Prompt Engineering and Loop Engineering, Clearly Explained</a></h3>
+        <div class="src">Daily Dose of Data Science &middot; 2026-06-27</div>
+        <p class="why">The cleanest statement of the shift. Start here to get the terms straight.</p></div></div>
+
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="1.02"><span class="cn">1.02</span><span class="chip free">Free</span></div>
+        <div class="body-col"><h3><a href="https://www.newsletter.swirlai.com/p/breaking-down-context-engineering">Breaking Down Context Engineering</a></h3>
+        <div class="src">SwirlAI &middot; 2025-08-30</div>
+        <p class="why">The original decomposition, written before the term got diluted.</p></div></div>
+
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="1.03"><span class="cn">1.03</span><span class="chip free">Free</span></div>
+        <div class="body-col"><h3><a href="https://www.newsletter.swirlai.com/p/state-of-context-engineering-in-2026">State of Context Engineering in 2026</a></h3>
+        <div class="src">SwirlAI &middot; 2026-03-22</div>
+        <p class="why">Read immediately after 1.02. The eighteen month diff is the actual lesson.</p></div></div>
+
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="1.04"><span class="cn">1.04</span><span class="chip free">Free</span></div>
+        <div class="body-col"><h3><a href="https://www.newsletter.swirlai.com/p/agent-skills-progressive-disclosure">Agent Skills, Progressive Disclosure as a System Design Pattern</a></h3>
+        <div class="src">SwirlAI &middot; 2026-03-11</div>
+        <p class="why">The most quantified piece in the plan. Three tiers. Discovery loads name and description at roughly 80 tokens per skill, so seventeen skills cost about 1,700. Activation loads full instructions at 275 to 8,000. Execution loads scripts and templates only at the relevant step. Compare that against ninety tool definitions burning 50,000 tokens before reasoning starts.</p></div></div>
+
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="1.05"><span class="cn">1.05</span><span class="chip free">Free</span></div>
+        <div class="body-col"><h3><a href="https://iaee.substack.com/p/agent-skills-intuitively-and-exhaustively">Agent Skills, Intuitively and Exhaustively Explained</a></h3>
+        <div class="src">Intuitively and Exhaustively Explained &middot; 2026-05-12</div>
+        <p class="why">Same pattern, more depth, worked examples.</p></div></div>
+
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="1.06"><span class="cn">1.06</span><span class="chip free">Free</span></div>
+        <div class="body-col"><h3><a href="https://www.the-ai-corner.com/p/claude-code-playbook-boris-cherny">Anthropic Deleted 80% of Claude Code's Prompt. It Got Smarter</a></h3>
+        <div class="src">The AI Corner &middot; 2026-08-07</div>
+        <p class="why">The empirical counterweight to prompt maximalism, and a useful gut check against any configuration file that has quietly grown past its usefulness.</p></div></div>
+    </div>
+  </div>
+
+  <!-- PHASE 2 -->
+  <div class="phase">
+    <div class="phead">
+      <div class="pnum">2</div>
+      <h2>The loop and the harness</h2>
+      <div class="pmeta">Week 2 &middot; ~4 hours &middot; 12 readings</div>
+      <p class="ppurpose">A harness is the information and tools that let a general agent do a specific job repeatably. This is where it stops being an abstraction and becomes a filesystem structure you can build.</p>
+    </div>
+    <div class="records">
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="2.01"><span class="cn">2.01</span><span class="chip free">Free</span></div>
+        <div class="body-col"><h3><a href="https://iaee.substack.com/p/agent-harnesses-intuitively-and-exhaustively">Agent Harnesses, Intuitively and Exhaustively Explained</a></h3>
+        <div class="src">Intuitively and Exhaustively Explained &middot; 2026-06-16</div>
+        <p class="why">The definition and the positioning, sitting between rigid graph agents that are unmaintainable and unconstrained ReAct that is unpredictable.</p></div></div>
+
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="2.02"><span class="cn">2.02</span><span class="chip free">Free</span></div>
+        <div class="body-col"><h3><a href="https://iaee.substack.com/p/agent-harnesses-with-claude-intuitively">Agent Harnesses with Claude</a></h3>
+        <div class="src">Intuitively and Exhaustively Explained &middot; 2026-06-27</div>
+        <p class="why">The most directly actionable piece here. A root descriptor, routing files named for their own subdirectory so the agent reads summaries before descending, and a leaf marker that stops exploration and forces use of a tailored skill. The real gem is maintenance. Reverse disclosure finds every routing document referencing a target file, so one high level instruction cascades across all of them instead of silently rotting.</p></div></div>
+
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="2.03"><span class="cn">2.03</span><span class="chip free">Free</span></div>
+        <div class="body-col"><h3><a href="https://www.latent.space/p/attention-interface">The Evolution of the Agent Harness</a></h3>
+        <div class="src">Latent.Space &middot; 2026-08-22</div>
+        <p class="why">Where the pattern came from and where the field thinks it is going.</p></div></div>
+
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="2.04"><span class="cn">2.04</span><span class="chip free">Free</span></div>
+        <div class="body-col"><h3><a href="https://blog.dailydoseofds.com/p/what-it-takes-to-build-a-production">What It Takes to Build a Production Agent Harness</a></h3>
+        <div class="src">Daily Dose of Data Science &middot; 2026-09-14</div>
+        <p class="why">The production checklist. Pairs with 2.05.</p></div></div>
+
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="2.05"><span class="cn">2.05</span><span class="chip free">Free</span></div>
+        <div class="body-col"><h3><a href="https://blog.dailydoseofds.com/p/run-any-agent-harness-under-one-interface">Run Any Agent Harness Under One Interface</a></h3>
+        <div class="src">Daily Dose of Data Science &middot; 2026-09-18</div>
+        <p class="why">Abstraction over harnesses, and the newest piece in the plan.</p></div></div>
+
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="2.06"><span class="cn">2.06</span><span class="chip paid">Paid</span></div>
+        <div class="body-col"><h3><a href="https://www.the-ai-corner.com/p/claude-code-loops-library-goal-schedule-recipes-2026">Stop prompting. Start writing loops</a></h3>
+        <div class="src">The AI Corner &middot; 2026-07-07</div>
+        <p class="why">A loop library organised around goals, schedules and recipes.</p></div></div>
+
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="2.07"><span class="cn">2.07</span><span class="chip paid">Paid</span></div>
+        <div class="body-col"><h3><a href="https://www.the-ai-corner.com/p/loop-engineering-coding-agents-2026">The head of Claude Code stopped prompting Claude</a></h3>
+        <div class="src">The AI Corner &middot; 2026-06-12</div>
+        <p class="why">The origin of the loop engineering framing that 0.01 later argues against. Read both, because the disagreement is the education.</p></div></div>
+
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="2.08"><span class="cn">2.08</span><span class="chip free">Free</span></div>
+        <div class="body-col"><h3><a href="https://newsletter.claudecodemasterclass.com/p/claude-code-loop-and-graph-engineering">Loop Engineering Masterclass, Your First Automation Toolkit</a></h3>
+        <div class="src">Claude Code Masterclass &middot; 2026-08-13</div>
+        <p class="why">The hands on version. Build alongside it rather than reading it through.</p></div></div>
+
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="2.09"><span class="cn">2.09</span><span class="chip free">Free</span></div>
+        <div class="body-col"><h3><a href="https://newsletter.claudecodemasterclass.com/p/claude-code-ralph-loop-from-basic">The Ralph Loop, From Basic Prompts to Autonomous Overnight Builds</a></h3>
+        <div class="src">Claude Code Masterclass &middot; 2026-04-01</div>
+        <p class="why">The most aggressive autonomy pattern in the plan. Read 0.01 first, then decide what gets a deterministic anchor before running any of this unattended.</p></div></div>
+
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="2.10"><span class="cn">2.10</span><span class="chip free">Free</span></div>
+        <div class="body-col"><h3><a href="https://refactoring.fm/p/how-to-orchestrate-ai-workflows">How to Orchestrate AI Workflows</a></h3>
+        <div class="src">Refactoring &middot; 2026-05-13</div>
+        <p class="why">Navigating the tradeoff between pure AI and deterministic software. Same territory as 0.01, argued from an engineering management seat rather than a systems one.</p></div></div>
+
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="2.11"><span class="cn">2.11</span><span class="chip paid">Paid</span></div>
+        <div class="body-col"><h3><a href="https://refactoring.fm/p/a-case-study-in-ai-product-development">A Case Study in AI Product Development</a></h3>
+        <div class="src">Refactoring &middot; 2026-07-29</div>
+        <p class="why">How one team built a custom internal harness for product and engineering work. The only real organisational case study in the plan, since everything else describes individual practice.</p></div></div>
+
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="2.12"><span class="cn">2.12</span><span class="chip paid">Paid</span></div>
+        <div class="body-col"><h3><a href="https://refactoring.fm/p/giving-agents-dynamic-autonomy">Giving agents dynamic autonomy</a></h3>
+        <div class="src">Refactoring &middot; 2026-08-26</div>
+        <p class="why">Graduated autonomy as a practical case study. The missing middle between asking every time and running overnight.</p></div></div>
+    </div>
+  </div>
+
+  <!-- PHASE 3 -->
+  <div class="phase">
+    <div class="phead">
+      <div class="pnum">3</div>
+      <h2>Memory, state, and typed decisions</h2>
+      <div class="pmeta">Week 3 &middot; ~4 hours &middot; 12 readings</div>
+      <p class="ppurpose">One constraint move applied twice. The reframe that makes the first half worth it is to stop asking what to retrieve and start asking what should never be stored. The second half points the same move at decisions rather than facts, declaring the answer shape before generation so an invalid answer is unrepresentable rather than merely unlikely.</p>
+    </div>
+    <div class="records">
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="3.01"><span class="cn">3.01</span><span class="chip free">Free</span></div>
+        <div class="body-col"><h3><a href="https://blog.dailydoseofds.com/p/agent-memory-is-only-as-good-as-its">Agent Memory Is Only as Good as Its Schema</a></h3>
+        <div class="src">Daily Dose of Data Science &middot; 2026-05-22</div>
+        <p class="why">The argument. Read before 3.02, which is the implementation.</p></div></div>
+
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="3.02"><span class="cn">3.02</span><span class="chip free">Free</span></div>
+        <div class="body-col"><h3><a href="https://blog.dailydoseofds.com/p/schema-guided-agent-memory-for-production">Schema Guided Agent Memory for Production Agents</a></h3>
+        <div class="src">Daily Dose of Data Science &middot; 2026-06-12</div>
+        <p class="why">Constrain the output space <b>before</b> generation. Typed entities with docstrings. Edges with source and target constraints, so an invalid relationship is unrepresentable rather than merely unlikely. Temporal facts that separate what was true from what is true. Budget roughly ten entity types, ten edge types and ten fields each, starting at three or four and expanding only when retrieval actually fails. <b>This is the hinge of the phase.</b> Once the constraint move is clear here, 3.10 is the same idea pointed at decisions and needs almost no new explanation.</p></div></div>
+
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="3.03"><span class="cn">3.03</span><span class="chip free">Free</span></div>
+        <div class="body-col"><h3><a href="https://www.newsletter.swirlai.com/p/simple-way-to-explain-memory-in-ai">Simple way to explain Memory in AI Agents</a></h3>
+        <div class="src">SwirlAI &middot; 2025-02-26</div>
+        <p class="why">The taxonomy of memory types, cleanly. Oldest piece in the plan and still the clearest primer.</p></div></div>
+
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="3.04"><span class="cn">3.04</span><span class="chip free">Free</span></div>
+        <div class="body-col"><h3><a href="https://blog.dailydoseofds.com/p/the-evolution-of-retrieval-layer">The Evolution of the Retrieval Layer</a></h3>
+        <div class="src">Daily Dose of Data Science &middot; 2026-06-03</div>
+        <p class="why">Why naive vector search stopped being the answer.</p></div></div>
+
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="3.05"><span class="cn">3.05</span><span class="chip free">Free</span></div>
+        <div class="body-col"><h3><a href="https://blog.dailydoseofds.com/p/rag-vs-graph-rag-vs-agentic-rag">RAG vs Graph RAG vs Agentic RAG</a></h3>
+        <div class="src">Daily Dose of Data Science &middot; 2026-05-28</div>
+        <p class="why">The bridge into Phase 4. This is where memory becomes a graph problem.</p></div></div>
+
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="3.06"><span class="cn">3.06</span><span class="chip free">Free</span></div>
+        <div class="body-col"><h3><a href="https://www.newsletter.swirlai.com/p/the-evolution-of-modern-rag-architectures">The evolution of Modern RAG Architectures</a></h3>
+        <div class="src">SwirlAI &middot; 2025-04-07</div>
+        <p class="why">Architectural history. Skim if 3.04 already landed.</p></div></div>
+
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="3.07"><span class="cn">3.07</span><span class="chip paid">Paid</span></div>
+        <div class="body-col"><h3><a href="https://www.the-ai-corner.com/p/ai-agent-memory-context-as-topology-playbook-2026">Your AI agent is going to hallucinate at scale</a></h3>
+        <div class="src">The AI Corner &middot; 2026-06-03</div>
+        <p class="why">Context as topology. A memory playbook rather than a memory theory.</p></div></div>
+
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="3.08"><span class="cn">3.08</span><span class="chip paid">Paid</span></div>
+        <div class="body-col"><h3><a href="https://www.the-ai-corner.com/p/self-evolving-agent-stack-playbooks-memory-skills-2026">The self evolving agent stack</a></h3>
+        <div class="src">The AI Corner &middot; 2026-07-10</div>
+        <p class="why">Playbooks, memory and skills treated as one stack. Discount the headline framing, because the stack model underneath it is sound.</p></div></div>
+
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="3.09"><span class="cn">3.09</span><span class="chip free">Free</span></div>
+        <div class="body-col"><h3><a href="https://blog.dailydoseofds.com/p/top-ai-labs-share-an-agent-memory">Top AI Labs Share an Agent Memory Trick Most Miss</a></h3>
+        <div class="src">Daily Dose of Data Science &middot; 2026-04-23</div>
+        <p class="why">Short. Read as a check on what stuck from the memory half before moving to the decision half.</p></div></div>
+
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="3.10"><span class="cn">3.10</span><span class="chip free">Free</span></div>
+        <div class="body-col"><h3><a href="https://blog.dailydoseofds.com/p/jev-clearly-explained">Jev, Clearly Explained</a></h3>
+        <div class="src">Daily Dose of Data Science &middot; 2026-09-21</div>
+        <p class="why">The decision layer made concrete. A model that takes a state plus declared questions and returns typed answers in three primitives, a choice from a set with per option probabilities, a score on ordered levels, and a yes or no returning a probability between 0 and 1. It writes no prose at all, and its output is built for software to consume rather than a person to read. Read straight after 3.02 and the symmetry does the teaching.</p></div></div>
+
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="3.11"><span class="cn">3.11</span><span class="chip free">Free</span></div>
+        <div class="body-col"><h3><a href="https://www.latent.space/p/jev">System One models for Prod, not God</a></h3>
+        <div class="src">Latent.Space &middot; 2026-09-21</div>
+        <p class="why">The durable idea is <b>System One</b>, fast automatic judgment treated as a separate class of model from slow deliberate reasoning. That framing outlives any particular product, and it is the vocabulary worth carrying forward.</p></div></div>
+
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="3.12"><span class="cn">3.12</span><span class="chip paid">Paid</span></div>
+        <div class="body-col"><h3><a href="https://www.the-ai-corner.com/p/jev-typesafe-system-one-model-decision-layer-playbook-2026">A Decision Layer Playbook</a></h3>
+        <div class="src">The AI Corner &middot; 2026-09-20</div>
+        <p class="why">The applied version. Four demos with receipts, plus ten specific agent decisions that could move off a frontier model. This is what turns the concept into something tried rather than read about.</p></div></div>
+    </div>
+
+    <div class="note">
+      <h4>The distinction this phase turns on</h4>
+      <p><b>Calibrated is not deterministic.</b> A decision model trained against outcomes rather than rater preference should have confidence numbers that track real accuracy, which is a genuine property most model confidence scores lack. It is still a model making a probabilistic call.</p>
+      <p>So a typed decision node is a better behaved judge, not the non probabilistic anchor that 0.01 argues every critical path needs. A compiler is that. A schema validator is that. A decision model sits closer to independent than a second frontier instance does, because it is a different architecture trained on different data, so the correlated blind spot problem shrinks. It does not disappear.</p>
+      <p class="q">Where does the calibration come from, and what happens to it when the distribution shifts? Carry that question into anything in this space, including whatever replaces the current tooling.</p>
+    </div>
+  </div>
+
+  <!-- PHASE 4 -->
+  <div class="phase">
+    <div class="phead">
+      <div class="pnum">4</div>
+      <h2>The keystone, knowledge representation</h2>
+      <div class="pmeta">Week 4 &middot; ~4 hours &middot; 14 readings &middot; highest leverage</div>
+      <p class="ppurpose">Phase 3 arrives at schema constrained graphs with temporal facts and treats it as a discovery. It is not. It is taxonomy and ontology work, and reading the practitioners directly is the difference between designing a memory system once and rewriting it in eighteen months.</p>
+    </div>
+    <div class="records">
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="4.01"><span class="cn">4.01</span><span class="chip free">Free</span></div>
+        <div class="body-col"><h3><a href="https://hybridhacker.email/p/the-rise-of-the-enterprise-graph">The Rise of the Enterprise Graph</a></h3>
+        <div class="src">Hybrid Hacker &middot; 2025-10-02</div>
+        <p class="why">Why most AI projects fail before they start. The best single argument for why this phase exists at all.</p></div></div>
+
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="4.02"><span class="cn">4.02</span><span class="chip paid">Paid</span></div>
+        <div class="body-col"><h3><a href="https://jessicatalisman.substack.com/p/a-practitioners-guide-to-taxonomies-e4f">A Practitioner's Guide to Taxonomies, Part II</a></h3>
+        <div class="src">Intentional Arrangement &middot; 2026-02-03</div>
+        <p class="why">Start the series here. Practitioner level rather than academic.</p></div></div>
+
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="4.03"><span class="cn">4.03</span><span class="chip paid">Paid</span></div>
+        <div class="body-col"><h3><a href="https://jessicatalisman.substack.com/p/a-practitioners-guide-to-taxonomies-9ab">A Practitioner's Guide to Taxonomies, Part III</a></h3>
+        <div class="src">Intentional Arrangement &middot; 2026-02-10</div>
+        <p class="why">Continues directly from 4.02.</p></div></div>
+
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="4.04"><span class="cn">4.04</span><span class="chip paid">Paid</span></div>
+        <div class="body-col"><h3><a href="https://jessicatalisman.substack.com/p/ontology-part-ii">Ontology, Part II</a></h3>
+        <div class="src">Intentional Arrangement &middot; 2026-03-03</div>
+        <p class="why">Where taxonomy becomes ontology, which is the distinction Phase 3 blurs.</p></div></div>
+
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="4.05"><span class="cn">4.05</span><span class="chip paid">Paid</span></div>
+        <div class="body-col"><h3><a href="https://jessicatalisman.substack.com/p/ontology-part-iii">Ontology, Part III</a></h3>
+        <div class="src">Intentional Arrangement &middot; 2026-03-09</div>
+        <p class="why">Continues the series.</p></div></div>
+
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="4.06"><span class="cn">4.06</span><span class="chip paid">Paid</span></div>
+        <div class="body-col"><h3><a href="https://jessicatalisman.substack.com/p/ontology-part-iv">Ontology, Part IV</a></h3>
+        <div class="src">Intentional Arrangement &middot; 2026-03-18</div>
+        <p class="why">Closes the series.</p></div></div>
+
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="4.07"><span class="cn">4.07</span><span class="chip paid">Paid</span></div>
+        <div class="body-col"><h3><a href="https://jessicatalisman.substack.com/p/ntwf-workflow-ontology">NTWF Workflow Ontology</a></h3>
+        <div class="src">Intentional Arrangement &middot; 2026-03-09</div>
+        <p class="why">A worked ontology for workflows. The closest thing in the plan to a template for modelling agent actions.</p></div></div>
+
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="4.08"><span class="cn">4.08</span><span class="chip paid">Paid</span></div>
+        <div class="body-col"><h3><a href="https://jessicatalisman.substack.com/p/knowledge-graphs-part-ii">Knowledge Graphs, Part II</a></h3>
+        <div class="src">Intentional Arrangement &middot; 2026-04-09</div>
+        <p class="why">Graphs proper, from the representation side rather than the retrieval side.</p></div></div>
+
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="4.09"><span class="cn">4.09</span><span class="chip paid">Paid</span></div>
+        <div class="body-col"><h3><a href="https://jessicatalisman.substack.com/p/semantic-and-knowledge-graph-roles">Semantic and Knowledge Graph Roles</a></h3>
+        <div class="src">Intentional Arrangement &middot; 2026-04-15</div>
+        <p class="why">Who actually does this work and what the roles are called. Useful when it comes time to hire for it.</p></div></div>
+
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="4.10"><span class="cn">4.10</span><span class="chip paid">Paid</span></div>
+        <div class="body-col"><h3><a href="https://jessicatalisman.substack.com/p/choosing-the-right-graph">Choosing the Right Graph</a></h3>
+        <div class="src">Intentional Arrangement &middot; 2026-05-23</div>
+        <p class="why">The decision framework. Directly answers the question 3.05 raises and leaves open.</p></div></div>
+
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="4.11"><span class="cn">4.11</span><span class="chip paid">Paid</span></div>
+        <div class="body-col"><h3><a href="https://jessicatalisman.substack.com/p/steal-this-deck">Steal This Deck</a></h3>
+        <div class="src">Intentional Arrangement &middot; 2026-05-09</div>
+        <p class="why">Ready made explanation material for convincing anyone that this layer matters.</p></div></div>
+
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="4.12"><span class="cn">4.12</span><span class="chip free">Free</span></div>
+        <div class="body-col"><h3><a href="https://jessicatalisman.substack.com/p/intentional-arrangement-skos-thesaurus">SKOS Thesaurus Editor</a></h3>
+        <div class="src">Intentional Arrangement &middot; 2026-08-09</div>
+        <p class="why">A tool rather than an essay. SKOS is the standard a hand rolled memory schema tends to reinvent badly.</p></div></div>
+
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="4.13"><span class="cn">4.13</span><span class="chip paid">Paid</span></div>
+        <div class="body-col"><h3><a href="https://refactoring.fm/p/introducing-portent">Introducing Portent</a></h3>
+        <div class="src">Refactoring &middot; 2026-05-20</div>
+        <p class="why">An open spec for knowledge bases, for work and life. Read against 4.12 and pick which abstraction is worth adopting.</p></div></div>
+
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="4.14"><span class="cn">4.14</span><span class="chip free">Free</span></div>
+        <div class="body-col"><h3><a href="https://refactoring.fm/p/introducing-tolaria">Introducing Tolaria</a></h3>
+        <div class="src">Refactoring &middot; 2026-04-22</div>
+        <p class="why">A free and open source macOS app for managing markdown knowledge bases. The running implementation of 4.13.</p></div></div>
+    </div>
+  </div>
+
+  <!-- PHASE 5 -->
+  <div class="phase">
+    <div class="phead">
+      <div class="pnum">5</div>
+      <h2>Practice</h2>
+      <div class="pmeta">Reference shelf &middot; dip in as needed &middot; 14 readings</div>
+      <p class="ppurpose">Not a sequence. Tactical material, best read when it matches the week's work, and carrying a much shorter shelf life than Phases 1 through 4.</p>
+    </div>
+    <div class="records">
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="5.01"><span class="cn">5.01</span><span class="chip free">Free</span></div>
+        <div class="body-col"><h3><a href="https://www.the-ai-corner.com/p/context-engineering-claude-code-playbook">How to 8x Your Code Output Using Context Engineering</a></h3>
+        <div class="src">The AI Corner &middot; 2026-08-20</div>
+        <p class="why">The playbook version of Phase 1. Ignore the multiplier in the title.</p></div></div>
+
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="5.02"><span class="cn">5.02</span><span class="chip free">Free</span></div>
+        <div class="body-col"><h3><a href="https://newsletter.claudecodemasterclass.com/p/claudemd-masterclass-from-start-to">CLAUDE.md Masterclass, with Hooks and Subagents</a></h3>
+        <div class="src">Claude Code Masterclass &middot; 2026-01-28</div>
+        <p class="why">Useful as a benchmark against any configuration file that has grown past the median.</p></div></div>
+
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="5.03"><span class="cn">5.03</span><span class="chip free">Free</span></div>
+        <div class="body-col"><h3><a href="https://newsletter.claudecodemasterclass.com/p/claude-code-hooks-masterclass-from">Hooks Masterclass, From Manual Clicks to Autonomous Pipeline</a></h3>
+        <div class="src">Claude Code Masterclass &middot; 2026-07-29</div>
+        <p class="why">Hooks are where a deterministic verification anchor actually gets installed. Read after 0.01.</p></div></div>
+
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="5.04"><span class="cn">5.04</span><span class="chip free">Free</span></div>
+        <div class="body-col"><h3><a href="https://newsletter.claudecodemasterclass.com/p/claude-code-graph-engineering-masterclass">Graph Engineering Masterclass, Systems That Think in Graphs</a></h3>
+        <div class="src">Claude Code Masterclass &middot; 2026-08-19</div>
+        <p class="why">The hands on counterpart to 0.01.</p></div></div>
+
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="5.05"><span class="cn">5.05</span><span class="chip free">Free</span></div>
+        <div class="body-col"><h3><a href="https://newsletter.claudecodemasterclass.com/p/claude-code-intentmd-masterclass">Intent.MD Masterclass</a></h3>
+        <div class="src">Claude Code Masterclass &middot; 2026-09-09</div>
+        <p class="why">Newest convention in the set. Verify the claims against primary documentation before adopting any of it.</p></div></div>
+
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="5.06"><span class="cn">5.06</span><span class="chip free">Free</span></div>
+        <div class="body-col"><h3><a href="https://hannahstulberg.substack.com/p/claude-code-for-everything-why-ai">Why AI Gets Dumber The Longer You Talk To It</a></h3>
+        <div class="src">In the Weeds &middot; 2026-01-20</div>
+        <p class="why">Context degradation explained without jargon. The most useful thing here to hand to a non engineer.</p></div></div>
+
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="5.07"><span class="cn">5.07</span><span class="chip free">Free</span></div>
+        <div class="body-col"><h3><a href="https://hannahstulberg.substack.com/p/claude-code-for-everything-the-best-personal-assistant-remembers-everything-about-you">A CLAUDE.md Deep Dive</a></h3>
+        <div class="src">In the Weeds &middot; 2026-02-10</div>
+        <p class="why">Memory at the configuration layer, which is the cheap version of Phase 3.</p></div></div>
+
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="5.08"><span class="cn">5.08</span><span class="chip free">Free</span></div>
+        <div class="body-col"><h3><a href="https://hannahstulberg.substack.com/p/claude-code-for-everything-30-claude-code-tips-and-tricks">30 Claude Code Tips and Tricks</a></h3>
+        <div class="src">In the Weeds &middot; 2026-05-04</div>
+        <p class="why">Skim for the two or three that are not already habit.</p></div></div>
+
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="5.09"><span class="cn">5.09</span><span class="chip free">Free</span></div>
+        <div class="body-col"><h3><a href="https://blog.dailydoseofds.com/p/10-must-use-slash-commands-in-claude">10 Must use Slash Commands in Claude Code</a></h3>
+        <div class="src">Daily Dose of Data Science &middot; 2026-04-14</div>
+        <p class="why">Reference material.</p></div></div>
+
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="5.10"><span class="cn">5.10</span><span class="chip free">Free</span></div>
+        <div class="body-col"><h3><a href="https://blog.dailydoseofds.com/p/how-we-cut-our-claude-code-token">How We Cut Our Claude Code Token Usage 2.8x</a></h3>
+        <div class="src">Daily Dose of Data Science &middot; 2026-04-20</div>
+        <p class="why">Progressive disclosure applied, with numbers. The practical payoff of 1.04.</p></div></div>
+
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="5.11"><span class="cn">5.11</span><span class="chip free">Free</span></div>
+        <div class="body-col"><h3><a href="https://blog.dailydoseofds.com/p/two-skills-to-fix-the-context-gap">Two Skills to Fix the Context Gap</a></h3>
+        <div class="src">Daily Dose of Data Science &middot; 2026-04-30</div>
+        <p class="why">Small and concrete.</p></div></div>
+
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="5.12"><span class="cn">5.12</span><span class="chip paid">Paid</span></div>
+        <div class="body-col"><h3><a href="https://aimaker.substack.com/p/claude-code-hooks-workflow">How an Agent Harness Made My Setup 10x More Reliable</a></h3>
+        <div class="src">The AI Maker &middot; 2026-05-07</div>
+        <p class="why">The personal practice version of Phase 2.</p></div></div>
+
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="5.13"><span class="cn">5.13</span><span class="chip paid">Paid</span></div>
+        <div class="body-col"><h3><a href="https://aimaker.substack.com/p/ai-context-management-guide">The Complete Guide to the Context Folder</a></h3>
+        <div class="src">The AI Maker &middot; 2026-05-14</div>
+        <p class="why">A concrete directory convention worth comparing against the harness tree in 2.02.</p></div></div>
+
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="5.14"><span class="cn">5.14</span><span class="chip free">Free</span></div>
+        <div class="body-col"><h3><a href="https://refactoring.fm/p/shipping-like-claude-code">Shipping like Claude Code</a></h3>
+        <div class="src">Refactoring &middot; 2025-09-24</div>
+        <p class="why">Process lessons drawn from how the tool itself gets built.</p></div></div>
+    </div>
+  </div>
+
+  <!-- PHASE 6 -->
+  <div class="phase">
+    <div class="phead">
+      <div class="pnum">6</div>
+      <h2>The counterweight</h2>
+      <div class="pmeta">Read alongside, not after &middot; 6 readings</div>
+      <p class="ppurpose">Interleave one per week. Everything above is written by people whose incentive is for agents to work. This is the correction.</p>
+    </div>
+    <div class="records">
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="6.01"><span class="cn">6.01</span><span class="chip paid">Paid</span></div>
+        <div class="body-col"><h3><a href="https://refactoring.fm/p/ai-and-cognitive-debt">AI and Cognitive Debt</a></h3>
+        <div class="src">Refactoring &middot; 2025-09-10</div>
+        <p class="why">Read this one first. Comprehension debt compounds quietly, and the argument lands harder coming from someone with no stake in the habit.</p></div></div>
+
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="6.02"><span class="cn">6.02</span><span class="chip free">Free</span></div>
+        <div class="body-col"><h3><a href="https://www.newsletter.swirlai.com/p/evaluation-driven-development-for">Evaluation Driven Development for Agentic Systems</a></h3>
+        <div class="src">SwirlAI &middot; 2025-05-22</div>
+        <p class="why">The discipline that makes the deterministic anchor rule from 0.01 operational.</p></div></div>
+
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="6.03"><span class="cn">6.03</span><span class="chip free">Free</span></div>
+        <div class="body-col"><h3><a href="https://iaee.substack.com/p/towards-self-repairing-and-repeatable">Towards Self Repairing and Repeatable AI Systems</a></h3>
+        <div class="src">Intuitively and Exhaustively Explained &middot; 2026-08-05</div>
+        <p class="why">Repeatability as the actual goal, rather than capability.</p></div></div>
+
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="6.04"><span class="cn">6.04</span><span class="chip free">Free</span></div>
+        <div class="body-col"><h3><a href="https://www.newsletter.swirlai.com/p/enterprise-agentic-ai-hierarchy-of">Enterprise Agentic AI Hierarchy of Needs</a></h3>
+        <div class="src">SwirlAI &middot; 2025-06-18</div>
+        <p class="why">What has to be true before any of Phase 2 matters organisationally.</p></div></div>
+
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="6.05"><span class="cn">6.05</span><span class="chip free">Free</span></div>
+        <div class="body-col"><h3><a href="https://www.latent.space/p/state-of-code-evals-after-swe-bench">State of Code Evals, After SWE bench</a></h3>
+        <div class="src">Latent.Space &middot; 2025-12-31</div>
+        <p class="why">Where coding benchmarks actually stand, from the person who built the main one.</p></div></div>
+
+      <div class="rec"><div class="rail"><input class="tick" type="checkbox" data-id="6.06"><span class="cn">6.06</span><span class="chip paid">Paid</span></div>
+        <div class="body-col"><h3><a href="https://thesequence.substack.com/p/the-sequence-knowledge-675-learning">Learning to Evaluate Multi Agent AIs</a></h3>
+        <div class="src">TheSequence &middot; 2025-07-01</div>
+        <p class="why">The most direct treatment of the central claim in 0.01. Worth finding if the verification question becomes load bearing.</p></div></div>
+    </div>
+  </div>
+
+  <!-- BUILD -->
+  <section>
+    <h2 class="sect">Four things to build</h2>
+    <p class="sectlead">Reading without building turns eighteen hours into industry awareness. Each of these is small and traceable to a specific reading.</p>
+    <div class="builds">
+      <div class="build"><div class="bn">01</div><div>
+        <h3>Route the skills directory</h3>
+        <p>Convert a flat skills folder into a harness tree. A root descriptor, routing files named for their own subdirectory so the agent reads summaries before descending, and leaf markers where exploration should stop and a tailored skill should take over. Then add reverse reference lookup so a single high level edit cascades to every routing document that mentions the target.</p>
+        <div class="from">from 2.02, validated against 5.13</div>
+      </div></div>
+
+      <div class="build"><div class="bn">02</div><div>
+        <h3>Write the memory schema before the memory code</h3>
+        <p>Three or four entity types. Three or four edge types, each with source and target constrained so invalid relationships are unrepresentable rather than merely unlikely. Temporal facts kept separate so what was true never silently serves as what is true. Expand only when retrieval actually fails, not in anticipation.</p>
+        <div class="from">from 3.02, grounded by 4.10 and 4.12</div>
+      </div></div>
+
+      <div class="build"><div class="bn">03</div><div>
+        <h3>Put one non probabilistic node on every critical path</h3>
+        <p>A compiler, a type checker, a schema validator, something with zero error correlation to the model. Majority voting several model instances is not verification, because they share weights, training data and blind spots. Audit anywhere a fan out to multiple agents currently gets treated as a check.</p>
+        <div class="from">from 0.01, installed via 5.03</div>
+      </div></div>
+
+      <div class="build"><div class="bn">04</div><div>
+        <h3>Measure what loads before reasoning starts</h3>
+        <p>Count the tokens spent on tool definitions and always on context before the model does any work. The comparison worth making is that metadata only discovery runs around eighty tokens per skill, while a large tool roster can cost fifty thousand before the first thought.</p>
+        <div class="from">from 1.04, payoff documented in 5.10</div>
+      </div></div>
+    </div>
+  </section>
+
+  <footer>
+    Assembled 2026-09-22. 556 candidate posts screened by topic across a set of newsletters, 65 selected and sequenced. Five were read in full to write the annotations, 0.01, 1.04, 2.02, 3.02 and 3.10. The rest are annotated from title, subtitle, publication date and audience metadata, so treat those notes as informed routing rather than review. The decision model covered in 3.10 through 3.12 launched in September 2026, so its details come from 3.10 plus independent reporting and are worth confirming against primary sources. Paid labels describe the post, not any particular reader's access. Progress is stored in this browser only.
+  </footer>
+
+</div>
+
+<script>
+  (function () {
+    var KEY = "jeffols-agent-reading-plan-v1";
+    var ticks = Array.prototype.slice.call(document.querySelectorAll(".tick"));
+    var tally = document.getElementById("ptally");
+    var fill = document.getElementById("pfill");
+    var done = {};
+
+    try { done = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { done = {}; }
+
+    function paint() {
+      var n = 0;
+      ticks.forEach(function (t) {
+        var row = t.closest(".rec");
+        if (t.checked) { n++; row.classList.add("done"); }
+        else { row.classList.remove("done"); }
+      });
+      tally.textContent = n + " / " + ticks.length;
+      fill.style.width = (ticks.length ? (n / ticks.length) * 100 : 0) + "%";
+    }
+
+    ticks.forEach(function (t) {
+      var id = t.getAttribute("data-id");
+      t.checked = !!done[id];
+      t.setAttribute("aria-label", "Mark reading " + id + " as read");
+      t.addEventListener("change", function () {
+        if (t.checked) { done[id] = 1; } else { delete done[id]; }
+        try { localStorage.setItem(KEY, JSON.stringify(done)); } catch (e) {}
+        paint();
+      });
+    });
+
+    paint();
+  })();
+</script>
+</body>
+</html>
